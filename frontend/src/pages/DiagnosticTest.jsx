@@ -32,22 +32,147 @@ const DiagnosticTest = () => {
     { id: 'ai-ml', name: 'AI & Machine Learning', icon: '🤖', description: 'ML, Deep Learning, NLP, Computer Vision' }
   ];
 
+  const assessmentQuestions = {
+    'programming': [
+      {
+        _id: '1',
+        question: 'Which of the following is used to declare a variable in JavaScript?',
+        type: 'multiple-choice',
+        options: ['var', 'let', 'const', 'All of the above'],
+        correctAnswer: 'All of the above',
+        points: 10,
+        category: 'programming'
+      },
+      {
+        _id: '2',
+        question: 'What is the correct way to create a function in Python?',
+        type: 'multiple-choice',
+        options: ['function myFunc():', 'def myFunc():', 'create myFunc():', 'func myFunc():'],
+        correctAnswer: 'def myFunc():',
+        points: 10,
+        category: 'programming'
+      },
+      {
+        _id: '3',
+        question: 'Which keyword is used to create a class in Java?',
+        type: 'multiple-choice',
+        options: ['class', 'Class', 'object', 'Object'],
+        correctAnswer: 'class',
+        points: 10,
+        category: 'programming'
+      }
+    ],
+    'web-development': [
+      {
+        _id: '4',
+        question: 'What does HTML stand for?',
+        type: 'multiple-choice',
+        options: ['Hyper Text Markup Language', 'High Tech Modern Language', 'Home Tool Markup Language', 'Hyperlink and Text Markup Language'],
+        correctAnswer: 'Hyper Text Markup Language',
+        points: 10,
+        category: 'web-development'
+      },
+      {
+        _id: '5',
+        question: 'Which React hook is used for managing state?',
+        type: 'multiple-choice',
+        options: ['useEffect', 'useState', 'useContext', 'useReducer'],
+        correctAnswer: 'useState',
+        points: 10,
+        category: 'web-development'
+      },
+      {
+        _id: '6',
+        question: 'What is Node.js primarily used for?',
+        type: 'multiple-choice',
+        options: ['Frontend development', 'Database management', 'Server-side development', 'Mobile development'],
+        correctAnswer: 'Server-side development',
+        points: 10,
+        category: 'web-development'
+      }
+    ],
+    'mobile-development': [
+      {
+        _id: '7',
+        question: 'Which language is primarily used for iOS development?',
+        type: 'multiple-choice',
+        options: ['Java', 'Swift', 'Kotlin', 'C#'],
+        correctAnswer: 'Swift',
+        points: 10,
+        category: 'mobile-development'
+      },
+      {
+        _id: '8',
+        question: 'React Native allows you to build apps for which platforms?',
+        type: 'multiple-choice',
+        options: ['iOS only', 'Android only', 'Both iOS and Android', 'Web only'],
+        correctAnswer: 'Both iOS and Android',
+        points: 10,
+        category: 'mobile-development'
+      }
+    ],
+    'data-science': [
+      {
+        _id: '9',
+        question: 'Which Python library is commonly used for data manipulation?',
+        type: 'multiple-choice',
+        options: ['NumPy', 'Pandas', 'Matplotlib', 'All of the above'],
+        correctAnswer: 'All of the above',
+        points: 10,
+        category: 'data-science'
+      },
+      {
+        _id: '10',
+        question: 'What does SQL stand for?',
+        type: 'multiple-choice',
+        options: ['Structured Query Language', 'Simple Query Language', 'Standard Query Language', 'Sequential Query Language'],
+        correctAnswer: 'Structured Query Language',
+        points: 10,
+        category: 'data-science'
+      }
+    ],
+    'ai-ml': [
+      {
+        _id: '11',
+        question: 'Which algorithm is commonly used for classification problems?',
+        type: 'multiple-choice',
+        options: ['Linear Regression', 'Decision Tree', 'K-Means', 'PCA'],
+        correctAnswer: 'Decision Tree',
+        points: 10,
+        category: 'ai-ml'
+      },
+      {
+        _id: '12',
+        question: 'What is TensorFlow primarily used for?',
+        type: 'multiple-choice',
+        options: ['Web development', 'Machine learning', 'Database management', 'Mobile development'],
+        correctAnswer: 'Machine learning',
+        points: 10,
+        category: 'ai-ml'
+      }
+    ]
+  };
+
   useEffect(() => {
     if (selectedCategory) {
-      fetchAssessment();
+      const questions = assessmentQuestions[selectedCategory] || [];
+      const assessmentData = {
+        _id: `${selectedCategory}-assessment`,
+        title: `${selectedCategory.replace('-', ' ')} Assessment`,
+        type: 'category',
+        questions: questions.map(q => ({
+          _id: q._id,
+          question: q.question,
+          type: q.type,
+          options: q.options,
+          points: q.points,
+          category: q.category
+        }))
+      };
+      setAssessment(assessmentData);
+      setTimeLeft(questions.length * 60); // 1 minute per question
     }
   }, [selectedCategory]);
-
-  const fetchAssessment = async () => {
-    try {
-      const response = await api.get(`/assessments/category/${selectedCategory}`);
-      setAssessment(response.data);
-      // Set timer: 1 minute per question
-      setTimeLeft(response.data.questions.length * 60);
-    } catch (error) {
-      showToast('Failed to load assessment', 'error');
-    }
-  };
 
   const handleAnswerSelect = (questionIndex, answer) => {
     setAnswers(prev => ({
