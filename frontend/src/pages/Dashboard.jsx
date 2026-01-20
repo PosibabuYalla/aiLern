@@ -11,7 +11,8 @@ import {
   ClockIcon,
   StarIcon,
   ArrowRightIcon,
-  SparklesIcon
+  SparklesIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 
 const Dashboard = () => {
@@ -22,6 +23,7 @@ const Dashboard = () => {
     totalTimeSpent: 240,
     averageScore: 85
   });
+  const [selectedVideo, setSelectedVideo] = useState(null);
   
   const [recommendedCourses] = useState([
     {
@@ -30,6 +32,7 @@ const Dashboard = () => {
       description: 'Learn the core concepts of ML',
       difficulty: 'intermediate',
       estimatedDuration: 400,
+      videoId: '7eh4d6sabA0',
       thumbnail: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400&h=300&fit=crop'
     },
     {
@@ -38,6 +41,7 @@ const Dashboard = () => {
       description: 'Master neural networks and deep learning',
       difficulty: 'advanced',
       estimatedDuration: 450,
+      videoId: 'tPYj3fFJGjk',
       thumbnail: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=300&fit=crop'
     },
     {
@@ -46,6 +50,7 @@ const Dashboard = () => {
       description: 'Complete introduction to Python programming',
       difficulty: 'beginner',
       estimatedDuration: 200,
+      videoId: 'rfscVS0vtbw',
       thumbnail: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop'
     }
   ]);
@@ -156,7 +161,7 @@ const Dashboard = () => {
               </div>
               <div className="space-y-6">
                 {recommendedCourses.map((course) => (
-                  <CourseCard key={course._id} course={course} />
+                  <CourseCard key={course._id} course={course} onVideoClick={setSelectedVideo} />
                 ))}
               </div>
             </div>
@@ -193,6 +198,51 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      
+      {/* Video Modal */}
+      {selectedVideo && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h3 className="text-2xl font-bold text-gray-900">{selectedVideo.title}</h3>
+              <button
+                onClick={() => setSelectedVideo(null)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <XMarkIcon className="h-6 w-6 text-gray-500" />
+              </button>
+            </div>
+            <div className="aspect-video">
+              <iframe
+                src={`https://www.youtube.com/embed/${selectedVideo.videoId}?autoplay=1`}
+                title={selectedVideo.title}
+                className="w-full h-full"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-600 mb-4">{selectedVideo.description}</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4 text-sm text-gray-500">
+                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium">
+                    {selectedVideo.difficulty}
+                  </span>
+                  <span>{selectedVideo.estimatedDuration} min</span>
+                </div>
+                <Link
+                  to={`/course/${selectedVideo._id}`}
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  onClick={() => setSelectedVideo(null)}
+                >
+                  View Full Course
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -213,33 +263,40 @@ const StatCard = ({ icon: Icon, title, value, color, bgColor, textColor, isText 
   </div>
 );
 
-const CourseCard = ({ course }) => (
-  <Link to={`/course/${course._id}`} className="group">
-    <div className="flex items-center p-6 border border-gray-200 rounded-2xl hover:border-blue-300 hover:shadow-lg transition-all duration-300 cursor-pointer">
-      <img 
-        src={course.thumbnail} 
-        alt={course.title}
-        className="w-20 h-20 rounded-xl object-cover mr-6 group-hover:scale-105 transition-transform duration-300"
-      />
-      <div className="flex-1">
-        <h3 className="font-bold text-lg text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-200">
-          {course.title}
-        </h3>
-        <p className="text-gray-600 mb-3">{course.description}</p>
-        <div className="flex items-center space-x-4 text-sm text-gray-500">
-          <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium">
-            {course.difficulty}
-          </span>
-          <span>{course.estimatedDuration} min</span>
-        </div>
-      </div>
-      <div className="ml-4">
-        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-600 transition-colors duration-200">
-          <PlayIcon className="h-6 w-6 text-blue-600 group-hover:text-white transition-colors duration-200" />
-        </div>
+const CourseCard = ({ course, onVideoClick }) => (
+  <div className="group flex items-center p-6 border border-gray-200 rounded-2xl hover:border-blue-300 hover:shadow-lg transition-all duration-300">
+    <img 
+      src={course.thumbnail} 
+      alt={course.title}
+      className="w-20 h-20 rounded-xl object-cover mr-6 group-hover:scale-105 transition-transform duration-300"
+    />
+    <div className="flex-1">
+      <h3 className="font-bold text-lg text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-200">
+        {course.title}
+      </h3>
+      <p className="text-gray-600 mb-3">{course.description}</p>
+      <div className="flex items-center space-x-4 text-sm text-gray-500">
+        <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium">
+          {course.difficulty}
+        </span>
+        <span>{course.estimatedDuration} min</span>
       </div>
     </div>
-  </Link>
+    <div className="ml-4 flex space-x-2">
+      <button
+        onClick={() => onVideoClick(course)}
+        className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors duration-200 group"
+        title="Watch Video"
+      >
+        <PlayIcon className="h-6 w-6 text-red-600 group-hover:text-white transition-colors duration-200" />
+      </button>
+      <Link to={`/course/${course._id}`}>
+        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-600 transition-colors duration-200">
+          <ArrowRightIcon className="h-6 w-6 text-blue-600 group-hover:text-white transition-colors duration-200" />
+        </div>
+      </Link>
+    </div>
+  </div>
 );
 
 const ActivityItem = ({ activity }) => (
