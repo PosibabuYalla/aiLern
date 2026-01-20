@@ -14,6 +14,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import DiagnosticTest from './pages/DiagnosticTest';
+import Courses from './pages/Courses';
 import CoursePage from './pages/CoursePage';
 import LessonPage from './pages/LessonPage';
 import Community from './pages/Community';
@@ -53,6 +54,11 @@ function App() {
                   <Route path="/diagnostic" element={
                     <ProtectedRoute>
                       <DiagnosticTest />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/courses" element={
+                    <ProtectedRoute>
+                      <Courses />
                     </ProtectedRoute>
                   } />
                   <Route path="/course/:id" element={

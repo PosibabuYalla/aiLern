@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../hooks/useLanguage';
 import { 
@@ -147,8 +148,10 @@ const Dashboard = () => {
                   Recommended for You
                 </h2>
                 <button className="text-blue-600 hover:text-blue-700 font-medium flex items-center">
-                  View All
-                  <ArrowRightIcon className="ml-1 h-4 w-4" />
+                  <Link to="/courses" className="flex items-center">
+                    View All
+                    <ArrowRightIcon className="ml-1 h-4 w-4" />
+                  </Link>
                 </button>
               </div>
               <div className="space-y-6">
@@ -211,30 +214,32 @@ const StatCard = ({ icon: Icon, title, value, color, bgColor, textColor, isText 
 );
 
 const CourseCard = ({ course }) => (
-  <div className="group flex items-center p-6 border border-gray-200 rounded-2xl hover:border-blue-300 hover:shadow-lg transition-all duration-300 cursor-pointer">
-    <img 
-      src={course.thumbnail} 
-      alt={course.title}
-      className="w-20 h-20 rounded-xl object-cover mr-6 group-hover:scale-105 transition-transform duration-300"
-    />
-    <div className="flex-1">
-      <h3 className="font-bold text-lg text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-200">
-        {course.title}
-      </h3>
-      <p className="text-gray-600 mb-3">{course.description}</p>
-      <div className="flex items-center space-x-4 text-sm text-gray-500">
-        <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium">
-          {course.difficulty}
-        </span>
-        <span>{course.estimatedDuration} min</span>
+  <Link to={`/course/${course._id}`} className="group">
+    <div className="flex items-center p-6 border border-gray-200 rounded-2xl hover:border-blue-300 hover:shadow-lg transition-all duration-300 cursor-pointer">
+      <img 
+        src={course.thumbnail} 
+        alt={course.title}
+        className="w-20 h-20 rounded-xl object-cover mr-6 group-hover:scale-105 transition-transform duration-300"
+      />
+      <div className="flex-1">
+        <h3 className="font-bold text-lg text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-200">
+          {course.title}
+        </h3>
+        <p className="text-gray-600 mb-3">{course.description}</p>
+        <div className="flex items-center space-x-4 text-sm text-gray-500">
+          <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium">
+            {course.difficulty}
+          </span>
+          <span>{course.estimatedDuration} min</span>
+        </div>
+      </div>
+      <div className="ml-4">
+        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-600 transition-colors duration-200">
+          <PlayIcon className="h-6 w-6 text-blue-600 group-hover:text-white transition-colors duration-200" />
+        </div>
       </div>
     </div>
-    <div className="ml-4">
-      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-600 transition-colors duration-200">
-        <PlayIcon className="h-6 w-6 text-blue-600 group-hover:text-white transition-colors duration-200" />
-      </div>
-    </div>
-  </div>
+  </Link>
 );
 
 const ActivityItem = ({ activity }) => (
