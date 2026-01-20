@@ -268,7 +268,15 @@ const DiagnosticTest = () => {
   }
 
   if (showResults) {
-    return <ResultsView results={results} onContinue={() => navigate('/dashboard')} />;
+    return <ResultsView results={results} onContinue={() => navigate('/dashboard')} onReset={() => {
+      setSelectedCategory(null);
+      setAssessment(null);
+      setCurrentQuestion(0);
+      setAnswers({});
+      setTimeLeft(0);
+      setShowResults(false);
+      setResults(null);
+    }} />;
   }
 
   const question = assessment.questions[currentQuestion];
@@ -413,7 +421,7 @@ const CategorySelection = ({ categories, onSelect }) => (
   </div>
 );
 
-const ResultsView = ({ results, onContinue }) => (
+const ResultsView = ({ results, onContinue, onReset }) => (
   <div className="max-w-4xl mx-auto px-4 py-8">
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8">
       <div className="text-center mb-8">
@@ -478,7 +486,7 @@ const ResultsView = ({ results, onContinue }) => (
           Back to Dashboard
         </button>
         <button
-          onClick={() => window.location.reload()}
+          onClick={onReset}
           className="px-8 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-medium"
         >
           Take Another Test
