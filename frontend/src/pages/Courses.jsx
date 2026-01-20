@@ -20,6 +20,42 @@ const Courses = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState('all');
 
+  // Tutorial videos data
+  const allVideos = {
+    'programming': [
+      { id: 'js1', title: 'JavaScript Fundamentals', videoId: 'PkZNo7MFNFg', duration: '3:26:42', description: 'Complete JavaScript tutorial for beginners', category: 'programming' },
+      { id: 'py1', title: 'Python Full Course', videoId: 'rfscVS0vtbw', duration: '4:26:52', description: 'Learn Python programming from scratch', category: 'programming' },
+      { id: 'java1', title: 'Java Programming', videoId: 'eIrMbAQSU34', duration: '12:18:11', description: 'Complete Java development course', category: 'programming' },
+      { id: 'cpp1', title: 'C++ Programming', videoId: '8jLOx1hD3_o', duration: '31:11:51', description: 'Advanced C++ programming concepts', category: 'programming' },
+      { id: 'cs1', title: 'C# Tutorial', videoId: 'GhQdlIFylQ8', duration: '4:31:26', description: 'C# programming for .NET development', category: 'programming' }
+    ],
+    'web-development': [
+      { id: 'react1', title: 'React.js Complete Guide', videoId: 'Ke90Tje7VS0', duration: '11:55:27', description: 'Build modern web apps with React', category: 'web-development' },
+      { id: 'node1', title: 'Node.js Backend', videoId: 'TlB_eWDSMt4', duration: '8:16:48', description: 'Server-side development with Node.js', category: 'web-development' },
+      { id: 'html1', title: 'HTML & CSS Course', videoId: 'mU6anWqZJcc', duration: '11:00:27', description: 'Complete HTML and CSS tutorial', category: 'web-development' },
+      { id: 'vue1', title: 'Vue.js Framework', videoId: 'FXpIoQ_rT_c', duration: '3:40:27', description: 'Progressive JavaScript framework', category: 'web-development' },
+      { id: 'angular1', title: 'Angular Complete', videoId: 'k5E2AVpwsko', duration: '12:00:00', description: 'Full Angular development course', category: 'web-development' }
+    ],
+    'mobile-development': [
+      { id: 'rn1', title: 'React Native Course', videoId: '0-S5a0eXPoc', duration: '6:06:50', description: 'Cross-platform mobile development', category: 'mobile-development' },
+      { id: 'flutter1', title: 'Flutter Development', videoId: 'VPvVD8t02U8', duration: '37:27:00', description: 'Build apps with Flutter and Dart', category: 'mobile-development' },
+      { id: 'ios1', title: 'iOS Swift Tutorial', videoId: '09TeUXjzpKs', duration: '10:30:15', description: 'Native iOS app development', category: 'mobile-development' },
+      { id: 'android1', title: 'Android Kotlin', videoId: 'F9UC9DY-vIU', duration: '9:55:00', description: 'Android development with Kotlin', category: 'mobile-development' }
+    ],
+    'data-science': [
+      { id: 'pyds1', title: 'Python Data Science', videoId: 'LHBE6Q9XlzI', duration: '12:00:00', description: 'Data analysis with Python', category: 'data-science' },
+      { id: 'sql1', title: 'SQL Complete Course', videoId: 'HXV3zeQKqGY', duration: '4:20:00', description: 'Database management with SQL', category: 'data-science' },
+      { id: 'r1', title: 'R Programming', videoId: '_V8eKsto3Ug', duration: '5:30:00', description: 'Statistical computing with R', category: 'data-science' },
+      { id: 'tableau1', title: 'Tableau Tutorial', videoId: 'TPMlZxRRaBQ', duration: '3:45:00', description: 'Data visualization with Tableau', category: 'data-science' }
+    ],
+    'ai-ml': [
+      { id: 'ml1', title: 'Machine Learning', videoId: '7eh4d6sabA0', duration: '11:00:00', description: 'ML algorithms with Python', category: 'ai-ml' },
+      { id: 'dl1', title: 'Deep Learning TensorFlow', videoId: 'tPYj3fFJGjk', duration: '7:00:00', description: 'Neural networks and deep learning', category: 'ai-ml' },
+      { id: 'nlp1', title: 'Natural Language Processing', videoId: 'fNxaJsNG3-s', duration: '5:30:00', description: 'Text processing and NLP', category: 'ai-ml' },
+      { id: 'cv1', title: 'Computer Vision OpenCV', videoId: 'oXlwWbU8l2o', duration: '8:45:00', description: 'Image processing and computer vision', category: 'ai-ml' }
+    ]
+  };
+
   const categories = [
     { id: 'all', name: 'All Courses', icon: ComputerDesktopIcon },
     { id: 'programming', name: 'Programming', icon: CodeBracketIcon },
@@ -55,6 +91,29 @@ const Courses = () => {
     course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     course.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Filter videos based on search and category
+  const getFilteredVideos = () => {
+    let videosToShow = [];
+    
+    if (selectedCategory === 'all') {
+      videosToShow = Object.values(allVideos).flat();
+    } else {
+      videosToShow = allVideos[selectedCategory] || [];
+    }
+    
+    if (searchTerm) {
+      videosToShow = videosToShow.filter(video =>
+        video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        video.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    return videosToShow;
+  };
+
+  const filteredVideos = getFilteredVideos();
+  const totalResults = filteredCourses.length + filteredVideos.length;
 
   if (loading) return <LoadingSpinner />;
 
@@ -149,217 +208,109 @@ const Courses = () => {
         </div>
 
         {/* Tutorial Videos Section */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            Tutorial Videos by Category
-          </h2>
-          
-          {/* Programming Languages */}
-          <div className="mb-10">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-              <CodeBracketIcon className="h-6 w-6 mr-2 text-blue-600" />
-              Programming Languages
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <VideoCard 
-                title="JavaScript Fundamentals" 
-                videoId="PkZNo7MFNFg" 
-                duration="3:26:42"
-                description="Complete JavaScript tutorial for beginners"
-              />
-              <VideoCard 
-                title="Python Full Course" 
-                videoId="rfscVS0vtbw" 
-                duration="4:26:52"
-                description="Learn Python programming from scratch"
-              />
-              <VideoCard 
-                title="Java Programming" 
-                videoId="eIrMbAQSU34" 
-                duration="12:18:11"
-                description="Complete Java development course"
-              />
-              <VideoCard 
-                title="C++ Programming" 
-                videoId="8jLOx1hD3_o" 
-                duration="31:11:51"
-                description="Advanced C++ programming concepts"
-              />
-              <VideoCard 
-                title="C# Tutorial" 
-                videoId="GhQdlIFylQ8" 
-                duration="4:31:26"
-                description="C# programming for .NET development"
-              />
-            </div>
+        {(!searchTerm || filteredVideos.length > 0) && (
+          <div className="mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+              {searchTerm ? 'Matching Tutorial Videos' : 'Tutorial Videos by Category'}
+            </h2>
+            
+            {searchTerm ? (
+              // Show filtered videos when searching
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredVideos.map(video => (
+                  <VideoCard 
+                    key={video.id}
+                    title={video.title} 
+                    videoId={video.videoId} 
+                    duration={video.duration}
+                    description={video.description}
+                    category={video.category}
+                  />
+                ))}
+              </div>
+            ) : (
+              // Show videos by category when not searching
+              <>
+                {(selectedCategory === 'all' || selectedCategory === 'programming') && (
+                  <VideoSection 
+                    title="Programming Languages" 
+                    icon={CodeBracketIcon} 
+                    color="text-blue-600"
+                    videos={allVideos.programming}
+                  />
+                )}
+                
+                {(selectedCategory === 'all' || selectedCategory === 'web-development') && (
+                  <VideoSection 
+                    title="Web Development" 
+                    icon={ComputerDesktopIcon} 
+                    color="text-green-600"
+                    videos={allVideos['web-development']}
+                  />
+                )}
+                
+                {(selectedCategory === 'all' || selectedCategory === 'mobile-development') && (
+                  <VideoSection 
+                    title="Mobile Development" 
+                    icon={CpuChipIcon} 
+                    color="text-purple-600"
+                    videos={allVideos['mobile-development']}
+                  />
+                )}
+                
+                {(selectedCategory === 'all' || selectedCategory === 'data-science') && (
+                  <VideoSection 
+                    title="Data Science" 
+                    icon={CpuChipIcon} 
+                    color="text-orange-600"
+                    videos={allVideos['data-science']}
+                  />
+                )}
+                
+                {(selectedCategory === 'all' || selectedCategory === 'ai-ml') && (
+                  <VideoSection 
+                    title="AI & Machine Learning" 
+                    icon={CpuChipIcon} 
+                    color="text-red-600"
+                    videos={allVideos['ai-ml']}
+                  />
+                )}
+              </>
+            )}
           </div>
-
-          {/* Web Development */}
-          <div className="mb-10">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-              <ComputerDesktopIcon className="h-6 w-6 mr-2 text-green-600" />
-              Web Development
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <VideoCard 
-                title="React.js Complete Guide" 
-                videoId="Ke90Tje7VS0" 
-                duration="11:55:27"
-                description="Build modern web apps with React"
-              />
-              <VideoCard 
-                title="Node.js Backend" 
-                videoId="TlB_eWDSMt4" 
-                duration="8:16:48"
-                description="Server-side development with Node.js"
-              />
-              <VideoCard 
-                title="HTML & CSS Course" 
-                videoId="mU6anWqZJcc" 
-                duration="11:00:27"
-                description="Complete HTML and CSS tutorial"
-              />
-              <VideoCard 
-                title="Vue.js Framework" 
-                videoId="FXpIoQ_rT_c" 
-                duration="3:40:27"
-                description="Progressive JavaScript framework"
-              />
-              <VideoCard 
-                title="Angular Complete" 
-                videoId="k5E2AVpwsko" 
-                duration="12:00:00"
-                description="Full Angular development course"
-              />
-            </div>
-          </div>
-
-          {/* Mobile Development */}
-          <div className="mb-10">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-              <CpuChipIcon className="h-6 w-6 mr-2 text-purple-600" />
-              Mobile Development
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <VideoCard 
-                title="React Native Course" 
-                videoId="0-S5a0eXPoc" 
-                duration="6:06:50"
-                description="Cross-platform mobile development"
-              />
-              <VideoCard 
-                title="Flutter Development" 
-                videoId="VPvVD8t02U8" 
-                duration="37:27:00"
-                description="Build apps with Flutter and Dart"
-              />
-              <VideoCard 
-                title="iOS Swift Tutorial" 
-                videoId="09TeUXjzpKs" 
-                duration="10:30:15"
-                description="Native iOS app development"
-              />
-              <VideoCard 
-                title="Android Kotlin" 
-                videoId="F9UC9DY-vIU" 
-                duration="9:55:00"
-                description="Android development with Kotlin"
-              />
-            </div>
-          </div>
-
-          {/* Data Science */}
-          <div className="mb-10">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-              <CpuChipIcon className="h-6 w-6 mr-2 text-orange-600" />
-              Data Science
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <VideoCard 
-                title="Python Data Science" 
-                videoId="LHBE6Q9XlzI" 
-                duration="12:00:00"
-                description="Data analysis with Python"
-              />
-              <VideoCard 
-                title="SQL Complete Course" 
-                videoId="HXV3zeQKqGY" 
-                duration="4:20:00"
-                description="Database management with SQL"
-              />
-              <VideoCard 
-                title="R Programming" 
-                videoId="_V8eKsto3Ug" 
-                duration="5:30:00"
-                description="Statistical computing with R"
-              />
-              <VideoCard 
-                title="Tableau Tutorial" 
-                videoId="TPMlZxRRaBQ" 
-                duration="3:45:00"
-                description="Data visualization with Tableau"
-              />
-            </div>
-          </div>
-
-          {/* AI & Machine Learning */}
-          <div className="mb-10">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-              <CpuChipIcon className="h-6 w-6 mr-2 text-red-600" />
-              AI & Machine Learning
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <VideoCard 
-                title="Machine Learning" 
-                videoId="7eh4d6sabA0" 
-                duration="11:00:00"
-                description="ML algorithms with Python"
-              />
-              <VideoCard 
-                title="Deep Learning TensorFlow" 
-                videoId="tPYj3fFJGjk" 
-                duration="7:00:00"
-                description="Neural networks and deep learning"
-              />
-              <VideoCard 
-                title="Natural Language Processing" 
-                videoId="fNxaJsNG3-s" 
-                duration="5:30:00"
-                description="Text processing and NLP"
-              />
-              <VideoCard 
-                title="Computer Vision OpenCV" 
-                videoId="oXlwWbU8l2o" 
-                duration="8:45:00"
-                description="Image processing and computer vision"
-              />
-            </div>
-          </div>
-        </div>
+        )}
 
         {/* Search Results Info */}
         {searchTerm && (
           <div className="mb-6">
             <p className="text-gray-600">
-              Found <span className="font-semibold text-blue-600">{filteredCourses.length}</span> courses for "{searchTerm}"
+              Found <span className="font-semibold text-blue-600">{totalResults}</span> results for "{searchTerm}" 
+              ({filteredCourses.length} courses, {filteredVideos.length} videos)
             </p>
           </div>
         )}
 
         {/* Courses Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredCourses.map(course => (
-            <CourseCard key={course._id} course={course} />
-          ))}
-        </div>
+        {(!searchTerm || filteredCourses.length > 0) && (
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              {searchTerm ? 'Matching Courses' : 'Available Courses'}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredCourses.map(course => (
+                <CourseCard key={course._id} course={course} />
+              ))}
+            </div>
+          </div>
+        )}
 
-        {filteredCourses.length === 0 && (
+        {searchTerm && totalResults === 0 && (
           <div className="text-center py-12">
             <div className="text-gray-400 mb-4">
               <CodeBracketIcon className="h-16 w-16 mx-auto" />
             </div>
-            <h3 className="text-xl font-medium text-gray-900 mb-2">No courses found</h3>
-            <p className="text-gray-600">Try adjusting your search or filters</p>
+            <h3 className="text-xl font-medium text-gray-900 mb-2">No results found</h3>
+            <p className="text-gray-600">Try adjusting your search term or filters</p>
           </div>
         )}
       </div>
@@ -367,7 +318,30 @@ const Courses = () => {
   );
 };
 
-const VideoCard = ({ title, videoId, duration, description }) => {
+const VideoSection = ({ title, icon: Icon, color, videos }) => {
+  return (
+    <div className="mb-10">
+      <h3 className={`text-2xl font-semibold text-gray-800 mb-6 flex items-center`}>
+        <Icon className={`h-6 w-6 mr-2 ${color}`} />
+        {title}
+      </h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {videos.map(video => (
+          <VideoCard 
+            key={video.id}
+            title={video.title} 
+            videoId={video.videoId} 
+            duration={video.duration}
+            description={video.description}
+            category={video.category}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const VideoCard = ({ title, videoId, duration, description, category }) => {
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
       <div className="relative">
@@ -387,7 +361,12 @@ const VideoCard = ({ title, videoId, duration, description }) => {
       </div>
       <div className="p-4">
         <h4 className="font-bold text-lg text-gray-900 mb-2">{title}</h4>
-        <p className="text-gray-600 text-sm">{description}</p>
+        <p className="text-gray-600 text-sm mb-3">{description}</p>
+        {category && (
+          <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full capitalize">
+            {category.replace('-', ' ')}
+          </span>
+        )}
       </div>
     </div>
   );
