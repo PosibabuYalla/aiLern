@@ -41,7 +41,7 @@ const Dashboard = () => {
       thumbnail: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=300&fit=crop'
     },
     {
-      _id: '3',
+      _id: '19',
       title: 'AI Ethics and Bias',
       description: 'Understanding responsible AI development',
       difficulty: 'beginner',
