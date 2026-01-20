@@ -27,6 +27,7 @@ const Navbar = () => {
   const navLinks = [
     { path: '/dashboard', label: t('dashboard') },
     { path: '/courses', label: t('courses') },
+    { path: '/tutorials', label: 'Tutorials' },
     { path: '/community', label: t('community') }
   ];
 

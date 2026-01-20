@@ -16,6 +16,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './pages/Dashboard';
 import DiagnosticTest from './pages/DiagnosticTest';
 import Courses from './pages/Courses';
+import Tutorials from './pages/Tutorials';
 import CoursePage from './pages/CoursePage';
 import LessonPage from './pages/LessonPage';
 import Community from './pages/Community';
@@ -61,6 +62,11 @@ function App() {
                   <Route path="/courses" element={
                     <ProtectedRoute>
                       <Courses />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/tutorials" element={
+                    <ProtectedRoute>
+                      <Tutorials />
                     </ProtectedRoute>
                   } />
                   <Route path="/course/:id" element={
