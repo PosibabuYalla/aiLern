@@ -42,7 +42,8 @@ const DiagnosticTest = () => {
     try {
       const response = await api.get(`/assessments/category/${selectedCategory}`);
       setAssessment(response.data);
-      setTimeLeft(response.data.timeLimit * 60);
+      // Set timer: 1 minute per question
+      setTimeLeft(response.data.questions.length * 60);
     } catch (error) {
       showToast('Failed to load assessment', 'error');
     }

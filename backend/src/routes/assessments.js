@@ -135,7 +135,6 @@ router.get('/category/:category', auth, async (req, res) => {
       _id: `${category}-assessment`,
       title: `${category.replace('-', ' ')} Assessment`,
       type: 'category',
-      timeLimit: 15, // 15 minutes per category
       passingScore: 70,
       questions: questions.map(q => ({
         _id: q._id,
