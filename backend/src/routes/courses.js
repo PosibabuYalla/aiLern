@@ -32,6 +32,10 @@ router.get('/', async (req, res) => {
         difficulty: 'beginner',
         category: 'programming',
         estimatedDuration: 180,
+        content: {
+          videoUrl: 'https://www.youtube.com/embed/PkZNo7MFNFg',
+          textContent: 'Learn JavaScript from scratch including variables, functions, objects, and DOM manipulation.'
+        },
         tags: ['javascript', 'programming', 'web'],
         isPublished: true
       },
@@ -42,6 +46,10 @@ router.get('/', async (req, res) => {
         difficulty: 'beginner',
         category: 'programming',
         estimatedDuration: 200,
+        content: {
+          videoUrl: 'https://www.youtube.com/embed/rfscVS0vtbw',
+          textContent: 'Learn Python syntax, data structures, functions, and object-oriented programming.'
+        },
         tags: ['python', 'programming', 'beginner'],
         isPublished: true
       },
@@ -52,6 +60,10 @@ router.get('/', async (req, res) => {
         difficulty: 'intermediate',
         category: 'web-development',
         estimatedDuration: 280,
+        content: {
+          videoUrl: 'https://www.youtube.com/embed/Ke90Tje7VS0',
+          textContent: 'Learn React components, hooks, state management, and building full-stack applications.'
+        },
         tags: ['react', 'javascript', 'frontend'],
         isPublished: true
       },
@@ -62,6 +74,10 @@ router.get('/', async (req, res) => {
         difficulty: 'intermediate',
         category: 'web-development',
         estimatedDuration: 250,
+        content: {
+          videoUrl: 'https://www.youtube.com/embed/TlB_eWDSMt4',
+          textContent: 'Build REST APIs, handle databases, authentication, and deploy Node.js applications.'
+        },
         tags: ['nodejs', 'backend', 'api'],
         isPublished: true
       },
@@ -72,6 +88,10 @@ router.get('/', async (req, res) => {
         difficulty: 'intermediate',
         category: 'mobile-development',
         estimatedDuration: 320,
+        content: {
+          videoUrl: 'https://www.youtube.com/embed/0-S5a0eXPoc',
+          textContent: 'Create iOS and Android apps using React Native, navigation, and native modules.'
+        },
         tags: ['react-native', 'mobile', 'cross-platform'],
         isPublished: true
       },
@@ -82,6 +102,10 @@ router.get('/', async (req, res) => {
         difficulty: 'intermediate',
         category: 'data-science',
         estimatedDuration: 280,
+        content: {
+          videoUrl: 'https://www.youtube.com/embed/LHBE6Q9XlzI',
+          textContent: 'Learn pandas, numpy, matplotlib, and data manipulation techniques.'
+        },
         tags: ['python', 'data-science', 'pandas'],
         isPublished: true
       },
@@ -92,6 +116,10 @@ router.get('/', async (req, res) => {
         difficulty: 'advanced',
         category: 'ai-ml',
         estimatedDuration: 400,
+        content: {
+          videoUrl: 'https://www.youtube.com/embed/7eh4d6sabA0',
+          textContent: 'Learn supervised and unsupervised learning, scikit-learn, and model evaluation.'
+        },
         tags: ['machine-learning', 'python', 'ai'],
         isPublished: true
       },
@@ -102,6 +130,10 @@ router.get('/', async (req, res) => {
         difficulty: 'intermediate',
         category: 'programming',
         estimatedDuration: 240,
+        content: {
+          videoUrl: 'https://www.youtube.com/embed/eIrMbAQSU34',
+          textContent: 'Master Java programming including OOP, collections, exception handling, and multithreading.'
+        },
         tags: ['java', 'programming', 'oop'],
         isPublished: true
       }
@@ -133,29 +165,114 @@ router.get('/', async (req, res) => {
 // Get course by ID
 router.get('/:id', auth, async (req, res) => {
   try {
-    // Sample course data
-    const sampleCourse = {
-      _id: req.params.id,
-      title: 'JavaScript Fundamentals',
-      description: 'Master the basics of JavaScript programming language including variables, functions, objects, and DOM manipulation.',
-      difficulty: 'beginner',
-      category: 'programming',
-      estimatedDuration: 180,
-      content: {
-        textContent: 'JavaScript is a versatile programming language that runs in web browsers and on servers. In this course, you will learn the fundamental concepts of JavaScript programming including variables, data types, functions, objects, arrays, and DOM manipulation. We will cover modern ES6+ features and best practices for writing clean, maintainable code.',
-        codeExamples: [
-          'console.log("Hello World");',
-          'function greet(name) { return "Hello " + name; }',
-          'const numbers = [1, 2, 3, 4, 5];',
-          'const person = { name: "John", age: 30 };'
-        ]
+    const courseId = req.params.id;
+    
+    // Sample courses with videos
+    const courses = {
+      '1': {
+        _id: '1',
+        title: 'JavaScript Fundamentals',
+        description: 'Master the basics of JavaScript programming language including variables, functions, objects, and DOM manipulation.',
+        difficulty: 'beginner',
+        category: 'programming',
+        estimatedDuration: 180,
+        content: {
+          videoUrl: 'https://www.youtube.com/embed/PkZNo7MFNFg',
+          textContent: 'JavaScript is a versatile programming language that runs in web browsers and on servers. Learn variables, functions, objects, arrays, and DOM manipulation with modern ES6+ features.'
+        }
       },
-      tags: ['javascript', 'programming', 'web'],
-      isPublished: true,
-      userProgress: null
+      '2': {
+        _id: '2',
+        title: 'Python for Beginners',
+        description: 'Complete introduction to Python programming with hands-on examples.',
+        difficulty: 'beginner',
+        category: 'programming',
+        estimatedDuration: 200,
+        content: {
+          videoUrl: 'https://www.youtube.com/embed/rfscVS0vtbw',
+          textContent: 'Python is a powerful, easy-to-learn programming language. Master syntax, data structures, functions, and object-oriented programming concepts.'
+        }
+      },
+      '3': {
+        _id: '3',
+        title: 'React.js Complete Guide',
+        description: 'Build modern web applications with React framework.',
+        difficulty: 'intermediate',
+        category: 'web-development',
+        estimatedDuration: 280,
+        content: {
+          videoUrl: 'https://www.youtube.com/embed/Ke90Tje7VS0',
+          textContent: 'Learn React components, hooks, state management, and building full-stack applications with modern React patterns.'
+        }
+      },
+      '4': {
+        _id: '4',
+        title: 'Node.js Backend Development',
+        description: 'Server-side development with Node.js and Express framework.',
+        difficulty: 'intermediate',
+        category: 'web-development',
+        estimatedDuration: 250,
+        content: {
+          videoUrl: 'https://www.youtube.com/embed/TlB_eWDSMt4',
+          textContent: 'Build REST APIs, handle databases, authentication, and deploy Node.js applications with Express framework.'
+        }
+      },
+      '5': {
+        _id: '5',
+        title: 'React Native Mobile Apps',
+        description: 'Build cross-platform mobile apps with React Native.',
+        difficulty: 'intermediate',
+        category: 'mobile-development',
+        estimatedDuration: 320,
+        content: {
+          videoUrl: 'https://www.youtube.com/embed/0-S5a0eXPoc',
+          textContent: 'Create iOS and Android apps using React Native, navigation, and native modules for cross-platform development.'
+        }
+      },
+      '6': {
+        _id: '6',
+        title: 'Python for Data Science',
+        description: 'Data analysis and visualization with Python libraries.',
+        difficulty: 'intermediate',
+        category: 'data-science',
+        estimatedDuration: 280,
+        content: {
+          videoUrl: 'https://www.youtube.com/embed/LHBE6Q9XlzI',
+          textContent: 'Learn pandas, numpy, matplotlib, and data manipulation techniques for data science and analytics.'
+        }
+      },
+      '7': {
+        _id: '7',
+        title: 'Machine Learning with Python',
+        description: 'Introduction to machine learning algorithms and implementation.',
+        difficulty: 'advanced',
+        category: 'ai-ml',
+        estimatedDuration: 400,
+        content: {
+          videoUrl: 'https://www.youtube.com/embed/7eh4d6sabA0',
+          textContent: 'Learn supervised and unsupervised learning, scikit-learn, model evaluation, and machine learning best practices.'
+        }
+      },
+      '8': {
+        _id: '8',
+        title: 'Java Programming Essentials',
+        description: 'Learn Java programming from basics to advanced concepts.',
+        difficulty: 'intermediate',
+        category: 'programming',
+        estimatedDuration: 240,
+        content: {
+          videoUrl: 'https://www.youtube.com/embed/eIrMbAQSU34',
+          textContent: 'Master Java programming including OOP, collections, exception handling, and multithreading concepts.'
+        }
+      }
     };
     
-    res.json(sampleCourse);
+    const course = courses[courseId];
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+    
+    res.json({ ...course, userProgress: null });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

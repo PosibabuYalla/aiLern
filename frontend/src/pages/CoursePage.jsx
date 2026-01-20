@@ -52,8 +52,15 @@ const CoursePage = () => {
 
         {course.content?.videoUrl && (
           <div className="mb-8">
-            <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center">
-              <PlayIcon className="h-16 w-16 text-white" />
+            <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden">
+              <iframe
+                src={course.content.videoUrl}
+                title={course.title}
+                className="w-full h-full"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
             </div>
           </div>
         )}
