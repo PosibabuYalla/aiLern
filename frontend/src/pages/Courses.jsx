@@ -33,7 +33,7 @@ const Courses = () => {
 
   useEffect(() => {
     fetchCourses();
-  }, [selectedCategory, selectedDifficulty, searchTerm]);
+  }, [selectedCategory, selectedDifficulty]);
 
   const fetchCourses = async () => {
     try {
@@ -41,7 +41,6 @@ const Courses = () => {
       const params = new URLSearchParams();
       if (selectedCategory !== 'all') params.append('category', selectedCategory);
       if (selectedDifficulty !== 'all') params.append('difficulty', selectedDifficulty);
-      if (searchTerm) params.append('search', searchTerm);
 
       const response = await api.get(`/courses?${params.toString()}`);
       setCourses(response.data);
@@ -80,11 +79,19 @@ const Courses = () => {
               <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search courses..."
+                placeholder="Search courses by title or description..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              )}
             </div>
 
             {/* Category Filter */}
@@ -140,6 +147,15 @@ const Courses = () => {
             );
           })}
         </div>
+
+        {/* Search Results Info */}
+        {searchTerm && (
+          <div className="mb-6">
+            <p className="text-gray-600">
+              Found <span className="font-semibold text-blue-600">{filteredCourses.length}</span> courses for "{searchTerm}"
+            </p>
+          </div>
+        )}
 
         {/* Courses Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
