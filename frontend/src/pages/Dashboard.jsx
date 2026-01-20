@@ -108,7 +108,7 @@ const Dashboard = () => {
                   </div>
                   <div className="flex items-center bg-white/20 rounded-full px-4 py-2">
                     <SparklesIcon className="h-5 w-5 mr-2" />
-                    <span className="font-semibold">{user?.gamification?.points || 1250} points</span>
+                    <span className="font-semibold">{user?.gamification?.points || 0} points</span>
                   </div>
                 </div>
               </div>
@@ -149,7 +149,7 @@ const Dashboard = () => {
           <StatCard
             icon={TrophyIcon}
             title="Total Points"
-            value={user?.gamification?.points || 1250}
+            value={user?.gamification?.points || 0}
             color="from-yellow-500 to-yellow-600"
             bgColor="bg-yellow-50"
             textColor="text-yellow-600"
