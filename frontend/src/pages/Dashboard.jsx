@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../hooks/useLanguage';
+import { useToast } from '../hooks/useToast';
 import { 
   BookOpenIcon, 
   ChartBarIcon, 
@@ -24,6 +25,27 @@ const Dashboard = () => {
     averageScore: user?.averageScore || 0
   });
   const [selectedVideo, setSelectedVideo] = useState(null);
+  const [completedVideos, setCompletedVideos] = useState(user?.completedVideos || []);
+  const { showToast } = useToast();
+  const handleVideoComplete = (video) => {
+    if (completedVideos.includes(video.videoId)) return;
+    
+    const newCompletedVideos = [...completedVideos, video.videoId];
+    const currentPoints = user?.gamification?.points || 0;
+    const videoPoints = 25; // 25 points per tutorial video
+    const newPoints = currentPoints + videoPoints;
+    
+    updateUser({
+      completedVideos: newCompletedVideos,
+      gamification: {
+        ...user?.gamification,
+        points: newPoints
+      }
+    });
+    
+    setCompletedVideos(newCompletedVideos);
+    showToast(`Tutorial completed! +${videoPoints} points earned! ⭐`, 'success');
+  };
   
   const [recommendedCourses] = useState([
     {
@@ -236,14 +258,25 @@ const Dashboard = () => {
                     {selectedVideo.difficulty}
                   </span>
                   <span>{selectedVideo.estimatedDuration} min</span>
+                  <span className="text-yellow-500">⭐ 25 points</span>
                 </div>
-                <Link
-                  to={`/course/${selectedVideo._id}`}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                  onClick={() => setSelectedVideo(null)}
-                >
-                  View Full Course
-                </Link>
+                <div className="flex space-x-3">
+                  {!completedVideos.includes(selectedVideo.videoId) && (
+                    <button
+                      onClick={() => handleVideoComplete(selectedVideo)}
+                      className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                    >
+                      Mark Complete
+                    </button>
+                  )}
+                  <Link
+                    to={`/course/${selectedVideo._id}`}
+                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    onClick={() => setSelectedVideo(null)}
+                  >
+                    View Full Course
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

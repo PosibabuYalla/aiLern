@@ -42,11 +42,14 @@ export const AuthProvider = ({ children }) => {
           language: 'en'
         },
         skillLevel: 'intermediate',
+        coursesCompleted: 0,
+        totalTimeSpent: 0,
+        completedVideos: [],
         gamification: {
-          points: 1250,
-          level: 3,
-          badges: ['first-course', 'python-master'],
-          streak: 7
+          points: 0,
+          level: 1,
+          badges: [],
+          streak: 0
         }
       };
       
@@ -72,6 +75,9 @@ export const AuthProvider = ({ children }) => {
           language: userData.language || 'en'
         },
         skillLevel: 'beginner',
+        coursesCompleted: 0,
+        totalTimeSpent: 0,
+        completedVideos: [],
         gamification: {
           points: 0,
           level: 1,
