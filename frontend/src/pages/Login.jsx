@@ -55,7 +55,7 @@ const Login = () => {
         showToast('Welcome back! 🎉', 'success');
         navigate('/dashboard');
       } else {
-        showToast(result.message, 'error');
+        showToast('Invalid email address or password', 'error');
       }
     } catch (error) {
       showToast('Login failed. Please try again.', 'error');
