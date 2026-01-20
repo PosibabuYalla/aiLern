@@ -27,6 +27,21 @@ const Dashboard = () => {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [completedVideos, setCompletedVideos] = useState(user?.completedVideos || []);
   const { showToast } = useToast();
+  const addActivity = (title, type) => {
+    const newActivity = {
+      id: Date.now(),
+      title,
+      timestamp: new Date(),
+      type
+    };
+    
+    const updatedActivity = [newActivity, ...recentActivity].slice(0, 5); // Keep only last 5 activities
+    setRecentActivity(updatedActivity);
+    
+    // Update user profile with new activity
+    updateUser({ recentActivity: updatedActivity });
+  };
+
   const handleVideoComplete = (video) => {
     if (completedVideos.includes(video.videoId)) return;
     
@@ -44,6 +59,7 @@ const Dashboard = () => {
     });
     
     setCompletedVideos(newCompletedVideos);
+    addActivity(`Completed tutorial: ${video.title}`, 'completion');
     showToast(`Tutorial completed! +${videoPoints} points earned! ⭐`, 'success');
   };
   
@@ -77,11 +93,7 @@ const Dashboard = () => {
     }
   ]);
 
-  const [recentActivity] = useState([
-    { title: 'Completed Python Basics', timestamp: new Date(), type: 'completion' },
-    { title: 'Started ML Fundamentals', timestamp: new Date(), type: 'start' },
-    { title: 'Earned Python Badge', timestamp: new Date(), type: 'achievement' }
-  ]);
+  const [recentActivity, setRecentActivity] = useState(user?.recentActivity || []);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">

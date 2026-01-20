@@ -51,10 +51,22 @@ const CoursePage = () => {
     const currentPoints = user?.gamification?.points || 0;
     const newPoints = currentPoints + coursePoints;
     
+    // Add to recent activity
+    const newActivity = {
+      id: Date.now(),
+      title: `Completed course: ${course.title}`,
+      timestamp: new Date(),
+      type: 'completion'
+    };
+    
+    const currentActivity = user?.recentActivity || [];
+    const updatedActivity = [newActivity, ...currentActivity].slice(0, 5);
+    
     updateUser({
       completedCourses: newCompletedCourses,
       coursesCompleted,
       totalTimeSpent,
+      recentActivity: updatedActivity,
       gamification: {
         ...user?.gamification,
         points: newPoints

@@ -237,9 +237,25 @@ const DiagnosticTest = () => {
     const currentIndex = skillLevels.indexOf(currentSkillLevel);
     const newIndex = skillLevels.indexOf(skillLevel);
     
+    // Add to recent activity
+    const newActivity = {
+      id: Date.now(),
+      title: `Completed ${selectedCategory.replace('-', ' ')} assessment (${percentage}%)`,
+      timestamp: new Date(),
+      type: 'assessment'
+    };
+    
+    const currentActivity = user?.recentActivity || [];
+    const updatedActivity = [newActivity, ...currentActivity].slice(0, 5);
+    
     if (newIndex > currentIndex) {
-      updateUser({ skillLevel });
+      updateUser({ 
+        skillLevel,
+        recentActivity: updatedActivity
+      });
       showToast(`Skill level upgraded to ${skillLevel}! 🎉`, 'success');
+    } else {
+      updateUser({ recentActivity: updatedActivity });
     }
 
     const results = {
