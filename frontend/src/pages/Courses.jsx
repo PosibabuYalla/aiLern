@@ -148,6 +148,195 @@ const Courses = () => {
           })}
         </div>
 
+        {/* Tutorial Videos Section */}
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+            Tutorial Videos by Category
+          </h2>
+          
+          {/* Programming Languages */}
+          <div className="mb-10">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+              <CodeBracketIcon className="h-6 w-6 mr-2 text-blue-600" />
+              Programming Languages
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <VideoCard 
+                title="JavaScript Fundamentals" 
+                videoId="PkZNo7MFNFg" 
+                duration="3:26:42"
+                description="Complete JavaScript tutorial for beginners"
+              />
+              <VideoCard 
+                title="Python Full Course" 
+                videoId="rfscVS0vtbw" 
+                duration="4:26:52"
+                description="Learn Python programming from scratch"
+              />
+              <VideoCard 
+                title="Java Programming" 
+                videoId="eIrMbAQSU34" 
+                duration="12:18:11"
+                description="Complete Java development course"
+              />
+              <VideoCard 
+                title="C++ Programming" 
+                videoId="8jLOx1hD3_o" 
+                duration="31:11:51"
+                description="Advanced C++ programming concepts"
+              />
+              <VideoCard 
+                title="C# Tutorial" 
+                videoId="GhQdlIFylQ8" 
+                duration="4:31:26"
+                description="C# programming for .NET development"
+              />
+            </div>
+          </div>
+
+          {/* Web Development */}
+          <div className="mb-10">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+              <ComputerDesktopIcon className="h-6 w-6 mr-2 text-green-600" />
+              Web Development
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <VideoCard 
+                title="React.js Complete Guide" 
+                videoId="Ke90Tje7VS0" 
+                duration="11:55:27"
+                description="Build modern web apps with React"
+              />
+              <VideoCard 
+                title="Node.js Backend" 
+                videoId="TlB_eWDSMt4" 
+                duration="8:16:48"
+                description="Server-side development with Node.js"
+              />
+              <VideoCard 
+                title="HTML & CSS Course" 
+                videoId="mU6anWqZJcc" 
+                duration="11:00:27"
+                description="Complete HTML and CSS tutorial"
+              />
+              <VideoCard 
+                title="Vue.js Framework" 
+                videoId="FXpIoQ_rT_c" 
+                duration="3:40:27"
+                description="Progressive JavaScript framework"
+              />
+              <VideoCard 
+                title="Angular Complete" 
+                videoId="k5E2AVpwsko" 
+                duration="12:00:00"
+                description="Full Angular development course"
+              />
+            </div>
+          </div>
+
+          {/* Mobile Development */}
+          <div className="mb-10">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+              <CpuChipIcon className="h-6 w-6 mr-2 text-purple-600" />
+              Mobile Development
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <VideoCard 
+                title="React Native Course" 
+                videoId="0-S5a0eXPoc" 
+                duration="6:06:50"
+                description="Cross-platform mobile development"
+              />
+              <VideoCard 
+                title="Flutter Development" 
+                videoId="VPvVD8t02U8" 
+                duration="37:27:00"
+                description="Build apps with Flutter and Dart"
+              />
+              <VideoCard 
+                title="iOS Swift Tutorial" 
+                videoId="09TeUXjzpKs" 
+                duration="10:30:15"
+                description="Native iOS app development"
+              />
+              <VideoCard 
+                title="Android Kotlin" 
+                videoId="F9UC9DY-vIU" 
+                duration="9:55:00"
+                description="Android development with Kotlin"
+              />
+            </div>
+          </div>
+
+          {/* Data Science */}
+          <div className="mb-10">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+              <CpuChipIcon className="h-6 w-6 mr-2 text-orange-600" />
+              Data Science
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <VideoCard 
+                title="Python Data Science" 
+                videoId="LHBE6Q9XlzI" 
+                duration="12:00:00"
+                description="Data analysis with Python"
+              />
+              <VideoCard 
+                title="SQL Complete Course" 
+                videoId="HXV3zeQKqGY" 
+                duration="4:20:00"
+                description="Database management with SQL"
+              />
+              <VideoCard 
+                title="R Programming" 
+                videoId="_V8eKsto3Ug" 
+                duration="5:30:00"
+                description="Statistical computing with R"
+              />
+              <VideoCard 
+                title="Tableau Tutorial" 
+                videoId="TPMlZxRRaBQ" 
+                duration="3:45:00"
+                description="Data visualization with Tableau"
+              />
+            </div>
+          </div>
+
+          {/* AI & Machine Learning */}
+          <div className="mb-10">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+              <CpuChipIcon className="h-6 w-6 mr-2 text-red-600" />
+              AI & Machine Learning
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <VideoCard 
+                title="Machine Learning" 
+                videoId="7eh4d6sabA0" 
+                duration="11:00:00"
+                description="ML algorithms with Python"
+              />
+              <VideoCard 
+                title="Deep Learning TensorFlow" 
+                videoId="tPYj3fFJGjk" 
+                duration="7:00:00"
+                description="Neural networks and deep learning"
+              />
+              <VideoCard 
+                title="Natural Language Processing" 
+                videoId="fNxaJsNG3-s" 
+                duration="5:30:00"
+                description="Text processing and NLP"
+              />
+              <VideoCard 
+                title="Computer Vision OpenCV" 
+                videoId="oXlwWbU8l2o" 
+                duration="8:45:00"
+                description="Image processing and computer vision"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Search Results Info */}
         {searchTerm && (
           <div className="mb-6">
@@ -173,6 +362,32 @@ const Courses = () => {
             <p className="text-gray-600">Try adjusting your search or filters</p>
           </div>
         )}
+      </div>
+    </div>
+  );
+};
+
+const VideoCard = ({ title, videoId, duration, description }) => {
+  return (
+    <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+      <div className="relative">
+        <div className="aspect-video bg-gray-900 rounded-t-xl overflow-hidden">
+          <iframe
+            src={`https://www.youtube.com/embed/${videoId}`}
+            title={title}
+            className="w-full h-full"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        </div>
+        <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+          {duration}
+        </div>
+      </div>
+      <div className="p-4">
+        <h4 className="font-bold text-lg text-gray-900 mb-2">{title}</h4>
+        <p className="text-gray-600 text-sm">{description}</p>
       </div>
     </div>
   );
