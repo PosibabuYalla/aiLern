@@ -18,6 +18,13 @@ export const AuthProvider = ({ children }) => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
       setUser(JSON.parse(savedUser));
+    } else {
+      // Check for remembered credentials and auto-login
+      const savedCredentials = localStorage.getItem('rememberedCredentials');
+      if (savedCredentials) {
+        const { email, password } = JSON.parse(savedCredentials);
+        login(email, password);
+      }
     }
   }, []);
 
