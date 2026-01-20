@@ -12,7 +12,7 @@ import api from '../utils/api';
 
 const DiagnosticTest = () => {
   const navigate = useNavigate();
-  const { updateUser } = useAuth();
+  const { user, updateUser } = useAuth();
   const { showToast } = useToast();
   
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -230,6 +230,17 @@ const DiagnosticTest = () => {
     if (percentage >= 80) skillLevel = 'expert';
     else if (percentage >= 65) skillLevel = 'advanced';
     else if (percentage >= 40) skillLevel = 'intermediate';
+
+    // Update user skill level if assessment result is higher
+    const currentSkillLevel = user?.skillLevel || 'beginner';
+    const skillLevels = ['beginner', 'intermediate', 'advanced', 'expert'];
+    const currentIndex = skillLevels.indexOf(currentSkillLevel);
+    const newIndex = skillLevels.indexOf(skillLevel);
+    
+    if (newIndex > currentIndex) {
+      updateUser({ skillLevel });
+      showToast(`Skill level upgraded to ${skillLevel}! 🎉`, 'success');
+    }
 
     const results = {
       category: selectedCategory,

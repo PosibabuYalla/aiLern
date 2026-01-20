@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
           lastName: 'User',
           language: 'en'
         },
-        skillLevel: 'intermediate',
+        skillLevel: 'beginner',
         coursesCompleted: 0,
         totalTimeSpent: 0,
         completedVideos: [],
