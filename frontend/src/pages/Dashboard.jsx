@@ -183,16 +183,22 @@ const Dashboard = () => {
             <div className="bg-white rounded-2xl shadow-lg p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h3>
               <div className="space-y-3">
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center">
-                  <PlayIcon className="h-5 w-5 mr-2" />
-                  Continue Learning
-                </button>
-                <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors duration-200">
-                  Take Assessment
-                </button>
-                <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors duration-200">
-                  Join Community
-                </button>
+                <Link to="/courses">
+                  <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center">
+                    <PlayIcon className="h-5 w-5 mr-2" />
+                    Continue Learning
+                  </button>
+                </Link>
+                <Link to="/diagnostic">
+                  <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors duration-200">
+                    Take Assessment
+                  </button>
+                </Link>
+                <Link to="/community">
+                  <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors duration-200">
+                    Join Community
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
