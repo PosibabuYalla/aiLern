@@ -194,20 +194,59 @@ const DiagnosticTest = () => {
     if (isSubmitting) return;
     
     setIsSubmitting(true);
-    try {
-      const response = await api.post(`/assessments/category/${selectedCategory}/submit`, {
-        answers: Object.values(answers)
+    
+    // Get correct answers for the selected category
+    const correctAnswers = {
+      'programming': ['All of the above', 'def myFunc():', 'class'],
+      'web-development': ['Hyper Text Markup Language', 'useState', 'Server-side development'],
+      'mobile-development': ['Swift', 'Both iOS and Android'],
+      'data-science': ['All of the above', 'Structured Query Language'],
+      'ai-ml': ['Decision Tree', 'Machine learning']
+    };
+
+    const categoryAnswers = correctAnswers[selectedCategory] || [];
+    let correctCount = 0;
+    const totalQuestions = categoryAnswers.length;
+    const detailedResults = [];
+
+    categoryAnswers.forEach((correctAnswer, index) => {
+      const userAnswer = answers[index];
+      const isCorrect = userAnswer === correctAnswer;
+      if (isCorrect) correctCount++;
+      
+      detailedResults.push({
+        questionIndex: index + 1,
+        userAnswer: userAnswer || 'No answer',
+        correctAnswer,
+        isCorrect
       });
-      
-      setResults(response.data);
-      setShowResults(true);
-      
-      showToast('Assessment completed successfully!', 'success');
-    } catch (error) {
-      showToast('Failed to submit assessment', 'error');
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
+
+    const percentage = Math.round((correctCount / totalQuestions) * 100);
+    const totalScore = correctCount * 10;
+    const maxScore = totalQuestions * 10;
+
+    let skillLevel = 'beginner';
+    if (percentage >= 80) skillLevel = 'expert';
+    else if (percentage >= 65) skillLevel = 'advanced';
+    else if (percentage >= 40) skillLevel = 'intermediate';
+
+    const results = {
+      category: selectedCategory,
+      totalScore,
+      maxScore,
+      correctCount,
+      totalQuestions,
+      percentage,
+      skillLevel,
+      detailedResults
+    };
+    
+    setResults(results);
+    setShowResults(true);
+    setIsSubmitting(false);
+    
+    showToast('Assessment completed successfully!', 'success');
   };
 
   const formatTime = (seconds) => {
@@ -376,50 +415,75 @@ const CategorySelection = ({ categories, onSelect }) => (
 
 const ResultsView = ({ results, onContinue }) => (
   <div className="max-w-4xl mx-auto px-4 py-8">
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8 text-center">
-      <div className="mb-6">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8">
+      <div className="text-center mb-8">
         <CheckCircleIcon className="h-16 w-16 text-green-500 mx-auto mb-4" />
         <h1 className="text-3xl font-bold mb-2">Assessment Complete!</h1>
-        <p className="text-gray-600">Here are your results</p>
+        <p className="text-gray-600 capitalize">{results.category.replace('-', ' ')} Assessment Results</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg">
-          <h3 className="text-lg font-semibold mb-2">Overall Score</h3>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg text-center">
+          <h3 className="text-lg font-semibold mb-2">Score</h3>
           <p className="text-3xl font-bold text-blue-600">
-            {results.percentage}%
+            {results.totalScore}/{results.maxScore}
           </p>
-          <p className="text-sm text-gray-600">
-            {results.totalScore} / {results.maxScore} points
+          <p className="text-sm text-gray-600">{results.percentage}%</p>
+        </div>
+        
+        <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-lg text-center">
+          <h3 className="text-lg font-semibold mb-2">Correct</h3>
+          <p className="text-3xl font-bold text-green-600">
+            {results.correctCount}/{results.totalQuestions}
           </p>
         </div>
         
-        <div className="bg-purple-50 dark:bg-purple-900/20 p-6 rounded-lg">
-          <h3 className="text-lg font-semibold mb-2">Skill Level</h3>
-          <p className="text-3xl font-bold text-purple-600 capitalize">
+        <div className="bg-purple-50 dark:bg-purple-900/20 p-6 rounded-lg text-center">
+          <h3 className="text-lg font-semibold mb-2">Level</h3>
+          <p className="text-2xl font-bold text-purple-600 capitalize">
             {results.skillLevel}
           </p>
         </div>
       </div>
 
       <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-4">Category Breakdown</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {Object.entries(results.categoryScores).map(([category, score]) => (
-            <div key={category} className="text-center">
-              <p className="text-sm font-medium capitalize">{category.replace(/([A-Z])/g, ' $1')}</p>
-              <p className="text-2xl font-bold">{score}</p>
+        <h3 className="text-xl font-semibold mb-4">Detailed Results</h3>
+        <div className="space-y-3">
+          {results.detailedResults.map((result, index) => (
+            <div key={index} className={`p-4 rounded-lg border-2 ${
+              result.isCorrect ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'
+            }`}>
+              <div className="flex items-center justify-between">
+                <span className="font-medium">Question {result.questionIndex}</span>
+                {result.isCorrect ? (
+                  <CheckCircleIcon className="h-6 w-6 text-green-500" />
+                ) : (
+                  <XCircleIcon className="h-6 w-6 text-red-500" />
+                )}
+              </div>
+              <div className="mt-2 text-sm">
+                <p><strong>Your Answer:</strong> {result.userAnswer}</p>
+                <p><strong>Correct Answer:</strong> {result.correctAnswer}</p>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      <button
-        onClick={onContinue}
-        className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
-      >
-        Continue to Dashboard
-      </button>
+      <div className="text-center">
+        <button
+          onClick={onContinue}
+          className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium mr-4"
+        >
+          Back to Dashboard
+        </button>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-8 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-medium"
+        >
+          Take Another Test
+        </button>
+      </div>
     </div>
   </div>
 );
