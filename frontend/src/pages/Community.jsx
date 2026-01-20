@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { PlusIcon, ChatBubbleLeftIcon, HeartIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, ChatBubbleLeftIcon, HeartIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { useToast } from '../hooks/useToast';
 import api from '../utils/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -7,6 +8,8 @@ const Community = () => {
   const [discussions, setDiscussions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showNewPost, setShowNewPost] = useState(false);
+  const [newPost, setNewPost] = useState({ title: '', content: '', type: 'discussion' });
+  const { showToast } = useToast();
 
   useEffect(() => {
     fetchDiscussions();
@@ -20,6 +23,35 @@ const Community = () => {
       console.error('Failed to fetch discussions:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCreatePost = async (e) => {
+    e.preventDefault();
+    if (!newPost.title.trim() || !newPost.content.trim()) {
+      showToast('Please fill in all fields', 'error');
+      return;
+    }
+
+    try {
+      const mockPost = {
+        _id: Date.now().toString(),
+        title: newPost.title,
+        content: newPost.content,
+        type: newPost.type,
+        author: { profile: { firstName: 'You', lastName: '' } },
+        createdAt: new Date().toISOString(),
+        likes: [],
+        replies: [],
+        views: 0
+      };
+      
+      setDiscussions(prev => [mockPost, ...prev]);
+      setNewPost({ title: '', content: '', type: 'discussion' });
+      setShowNewPost(false);
+      showToast('Post created successfully!', 'success');
+    } catch (error) {
+      showToast('Failed to create post', 'error');
     }
   };
 
@@ -91,6 +123,84 @@ const Community = () => {
           views: 23
         }} />
       </div>
+
+      {/* New Post Modal */}
+      {showNewPost && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h3 className="text-2xl font-bold text-gray-900">Create New Post</h3>
+              <button
+                onClick={() => setShowNewPost(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <XMarkIcon className="h-6 w-6 text-gray-500" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleCreatePost} className="p-6">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Post Type
+                </label>
+                <select
+                  value={newPost.type}
+                  onChange={(e) => setNewPost(prev => ({ ...prev, type: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="discussion">Discussion</option>
+                  <option value="question">Question</option>
+                  <option value="project">Project</option>
+                </select>
+              </div>
+              
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  value={newPost.title}
+                  onChange={(e) => setNewPost(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="Enter your post title..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Content
+                </label>
+                <textarea
+                  value={newPost.content}
+                  onChange={(e) => setNewPost(prev => ({ ...prev, content: e.target.value }))}
+                  placeholder="Share your thoughts, ask a question, or describe your project..."
+                  rows={6}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  required
+                />
+              </div>
+              
+              <div className="flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setShowNewPost(false)}
+                  className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Create Post
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
