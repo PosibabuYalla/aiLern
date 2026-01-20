@@ -40,14 +40,29 @@ const CoursePage = () => {
     const coursesCompleted = (user?.coursesCompleted || 0) + 1;
     const totalTimeSpent = (user?.totalTimeSpent || 0) + (course?.estimatedDuration || 0);
     
+    // Award points based on course difficulty
+    const pointsMap = {
+      'beginner': 50,
+      'intermediate': 100,
+      'advanced': 150,
+      'expert': 200
+    };
+    const coursePoints = pointsMap[course?.difficulty] || 50;
+    const currentPoints = user?.gamification?.points || 0;
+    const newPoints = currentPoints + coursePoints;
+    
     updateUser({
       completedCourses: newCompletedCourses,
       coursesCompleted,
-      totalTimeSpent
+      totalTimeSpent,
+      gamification: {
+        ...user?.gamification,
+        points: newPoints
+      }
     });
     
     setIsCompleted(true);
-    showToast('Course completed! 🎉', 'success');
+    showToast(`Course completed! +${coursePoints} points earned! 🎉`, 'success');
   };
 
   if (loading) return <LoadingSpinner />;
@@ -72,6 +87,18 @@ const CoursePage = () => {
             <div className="flex items-center">
               <UserIcon className="h-4 w-4 mr-1" />
               {course.difficulty}
+            </div>
+            <div className="flex items-center">
+              <span className="text-yellow-500 mr-1">★</span>
+              {(() => {
+                const pointsMap = {
+                  'beginner': 50,
+                  'intermediate': 100,
+                  'advanced': 150,
+                  'expert': 200
+                };
+                return pointsMap[course.difficulty] || 50;
+              })()} points
             </div>
           </div>
         </div>
