@@ -25,27 +25,27 @@ const Dashboard = () => {
   
   const [recommendedCourses] = useState([
     {
-      _id: '1',
+      _id: '19',
       title: 'Machine Learning Fundamentals',
       description: 'Learn the core concepts of ML',
       difficulty: 'intermediate',
-      estimatedDuration: 180,
+      estimatedDuration: 400,
       thumbnail: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400&h=300&fit=crop'
     },
     {
-      _id: '2',
+      _id: '20',
       title: 'Deep Learning with Python',
       description: 'Master neural networks and deep learning',
       difficulty: 'advanced',
-      estimatedDuration: 240,
+      estimatedDuration: 450,
       thumbnail: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=300&fit=crop'
     },
     {
-      _id: '19',
-      title: 'AI Ethics and Bias',
-      description: 'Understanding responsible AI development',
+      _id: '2',
+      title: 'Python for Beginners',
+      description: 'Complete introduction to Python programming',
       difficulty: 'beginner',
-      estimatedDuration: 120,
+      estimatedDuration: 200,
       thumbnail: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop'
     }
   ]);
