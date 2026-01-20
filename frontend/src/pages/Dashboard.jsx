@@ -190,12 +190,12 @@ const Dashboard = () => {
                   </button>
                 </Link>
                 <Link to="/diagnostic">
-                  <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors duration-200">
+                  <button className="w-full bg-gray-100 hover:bg-blue-600 hover:text-white text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors duration-200">
                     Take Assessment
                   </button>
                 </Link>
                 <Link to="/community">
-                  <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors duration-200">
+                  <button className="w-full bg-gray-100 hover:bg-blue-600 hover:text-white text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors duration-200">
                     Join Community
                   </button>
                 </Link>
