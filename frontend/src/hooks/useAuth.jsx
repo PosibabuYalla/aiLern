@@ -31,71 +31,95 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     setLoading(true);
     
-    // Mock login - accept any email/password
-    setTimeout(() => {
-      const mockUser = {
-        id: '1',
-        email,
-        profile: {
-          firstName: email.split('@')[0],
-          lastName: 'User',
-          language: 'en'
-        },
-        skillLevel: 'beginner',
-        coursesCompleted: 0,
-        totalTimeSpent: 0,
-        completedVideos: [],
-        gamification: {
-          points: 0,
-          level: 1,
-          badges: [],
-          streak: 0
-        }
-      };
-      
-      setUser(mockUser);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      setLoading(false);
-    }, 1000);
+    // Check stored users for valid credentials
+    const storedUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const validUser = storedUsers.find(user => 
+      user.email === email && user.password === password
+    );
     
-    return { success: true };
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        if (validUser) {
+          const userProfile = {
+            id: validUser.id,
+            email: validUser.email,
+            profile: validUser.profile,
+            skillLevel: validUser.skillLevel || 'beginner',
+            coursesCompleted: validUser.coursesCompleted || 0,
+            totalTimeSpent: validUser.totalTimeSpent || 0,
+            completedVideos: validUser.completedVideos || [],
+            gamification: validUser.gamification || {
+              points: 0,
+              level: 1,
+              badges: [],
+              streak: 0
+            }
+          };
+          
+          setUser(userProfile);
+          localStorage.setItem('user', JSON.stringify(userProfile));
+          setLoading(false);
+          resolve({ success: true });
+        } else {
+          setLoading(false);
+          resolve({ success: false, message: 'Invalid email or password' });
+        }
+      }, 1000);
+    });
   };
 
   const register = async (userData) => {
     setLoading(true);
     
-    // Mock registration
-    setTimeout(() => {
-      const mockUser = {
-        id: '1',
-        email: userData.email,
-        profile: {
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          language: userData.language || 'en'
-        },
-        skillLevel: 'beginner',
-        coursesCompleted: 0,
-        totalTimeSpent: 0,
-        completedVideos: [],
-        gamification: {
-          points: 0,
-          level: 1,
-          badges: [],
-          streak: 0
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // Check if user already exists
+        const storedUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+        const existingUser = storedUsers.find(user => user.email === userData.email);
+        
+        if (existingUser) {
+          setLoading(false);
+          resolve({ success: false, message: 'User already exists with this email' });
+          return;
         }
-      };
-      
-      setUser(mockUser);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      setLoading(false);
-    }, 1000);
-    
-    return { success: true };
+        
+        const newUser = {
+          id: Date.now().toString(),
+          email: userData.email,
+          password: userData.password,
+          profile: {
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            language: userData.language || 'en'
+          },
+          skillLevel: 'beginner',
+          coursesCompleted: 0,
+          totalTimeSpent: 0,
+          completedVideos: [],
+          gamification: {
+            points: 0,
+            level: 1,
+            badges: [],
+            streak: 0
+          }
+        };
+        
+        // Store user in registered users list
+        const updatedUsers = [...storedUsers, newUser];
+        localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers));
+        
+        // Set as current user
+        setUser(newUser);
+        localStorage.setItem('user', JSON.stringify(newUser));
+        setLoading(false);
+        resolve({ success: true });
+      }, 1000);
+    });
   };
 
   const logout = () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('rememberedCredentials');
     setUser(null);
   };
 
