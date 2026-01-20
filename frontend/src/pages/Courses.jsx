@@ -291,10 +291,10 @@ const Courses = () => {
         )}
 
         {/* Courses Grid */}
-        {(!searchTerm || filteredCourses.length > 0) && (
+        {filteredCourses.length > 0 && (
           <div className="mb-12">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              {searchTerm ? 'Matching Courses' : 'Available Courses'}
+              {searchTerm ? `Courses for "${searchTerm}"` : 'Available Courses'}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredCourses.map(course => (
