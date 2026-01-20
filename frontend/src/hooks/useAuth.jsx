@@ -15,6 +15,32 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Initialize with demo user if no users exist
+    const storedUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    if (storedUsers.length === 0) {
+      const demoUser = {
+        id: 'demo-user',
+        email: 'student@deepu.ai',
+        password: 'password123',
+        profile: {
+          firstName: 'Demo',
+          lastName: 'Student',
+          language: 'en'
+        },
+        skillLevel: 'beginner',
+        coursesCompleted: 0,
+        totalTimeSpent: 0,
+        completedVideos: [],
+        gamification: {
+          points: 0,
+          level: 1,
+          badges: [],
+          streak: 0
+        }
+      };
+      localStorage.setItem('registeredUsers', JSON.stringify([demoUser]));
+    }
+    
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
       setUser(JSON.parse(savedUser));
@@ -127,6 +153,13 @@ export const AuthProvider = ({ children }) => {
     const updatedUser = { ...user, ...userData };
     setUser(updatedUser);
     localStorage.setItem('user', JSON.stringify(updatedUser));
+    
+    // Also update the user in registeredUsers list
+    const storedUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const updatedUsers = storedUsers.map(storedUser => 
+      storedUser.id === user.id ? { ...storedUser, ...userData } : storedUser
+    );
+    localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers));
   };
 
   const value = {
