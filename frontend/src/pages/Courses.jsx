@@ -208,14 +208,14 @@ const Courses = () => {
         </div>
 
         {/* Tutorial Videos Section */}
-        {(!searchTerm || filteredVideos.length > 0) && (
+        {filteredVideos.length > 0 && (
           <div className="mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-              {searchTerm ? 'Matching Tutorial Videos' : 'Tutorial Videos by Category'}
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">
+              {searchTerm ? `Tutorial Videos for "${searchTerm}"` : 'Tutorial Videos by Category'}
             </h2>
             
             {searchTerm ? (
-              // Show filtered videos when searching
+              // Show only matching videos when searching
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredVideos.map(video => (
                   <VideoCard 
@@ -229,7 +229,7 @@ const Courses = () => {
                 ))}
               </div>
             ) : (
-              // Show videos by category when not searching
+              // Show all categories when not searching
               <>
                 {(selectedCategory === 'all' || selectedCategory === 'programming') && (
                   <VideoSection 
