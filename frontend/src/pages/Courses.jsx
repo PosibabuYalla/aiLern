@@ -100,11 +100,26 @@ const Courses = () => {
     let videosToShow = [];
     
     if (searchTerm) {
-      // When searching, show all matching videos regardless of category
-      videosToShow = Object.values(allVideos).flat().filter(video =>
-        video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        video.description.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      const searchLower = searchTerm.toLowerCase();
+      
+      // Check if searching for a category name
+      if (searchLower.includes('programming')) {
+        videosToShow = allVideos.programming || [];
+      } else if (searchLower.includes('web') || searchLower.includes('development')) {
+        videosToShow = allVideos['web-development'] || [];
+      } else if (searchLower.includes('mobile')) {
+        videosToShow = allVideos['mobile-development'] || [];
+      } else if (searchLower.includes('data') || searchLower.includes('science')) {
+        videosToShow = allVideos['data-science'] || [];
+      } else if (searchLower.includes('ai') || searchLower.includes('machine') || searchLower.includes('learning')) {
+        videosToShow = allVideos['ai-ml'] || [];
+      } else {
+        // Regular search - show all matching videos
+        videosToShow = Object.values(allVideos).flat().filter(video =>
+          video.title.toLowerCase().includes(searchLower) ||
+          video.description.toLowerCase().includes(searchLower)
+        );
+      }
     } else {
       // When not searching, filter by category
       if (selectedCategory === 'all') {
