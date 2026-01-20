@@ -15,6 +15,7 @@ const DiagnosticTest = () => {
   const { updateUser } = useAuth();
   const { showToast } = useToast();
   
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [assessment, setAssessment] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -23,24 +24,25 @@ const DiagnosticTest = () => {
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState(null);
 
-  useEffect(() => {
-    fetchAssessment();
-  }, []);
+  const categories = [
+    { id: 'programming', name: 'Programming Languages', icon: '💻', description: 'JavaScript, Python, Java, C++' },
+    { id: 'web-development', name: 'Web Development', icon: '🌐', description: 'HTML, CSS, React, Node.js' },
+    { id: 'mobile-development', name: 'Mobile Development', icon: '📱', description: 'React Native, Flutter, iOS, Android' },
+    { id: 'data-science', name: 'Data Science', icon: '📊', description: 'Python, SQL, R, Tableau' },
+    { id: 'ai-ml', name: 'AI & Machine Learning', icon: '🤖', description: 'ML, Deep Learning, NLP, Computer Vision' }
+  ];
 
   useEffect(() => {
-    if (timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-      return () => clearTimeout(timer);
-    } else if (timeLeft === 0 && assessment) {
-      handleSubmit();
+    if (selectedCategory) {
+      fetchAssessment();
     }
-  }, [timeLeft, assessment]);
+  }, [selectedCategory]);
 
   const fetchAssessment = async () => {
     try {
-      const response = await api.get('/assessments/diagnostic');
+      const response = await api.get(`/assessments/category/${selectedCategory}`);
       setAssessment(response.data);
-      setTimeLeft(response.data.timeLimit * 60); // Convert to seconds
+      setTimeLeft(response.data.timeLimit * 60);
     } catch (error) {
       showToast('Failed to load assessment', 'error');
     }
@@ -53,20 +55,26 @@ const DiagnosticTest = () => {
     }));
   };
 
+  useEffect(() => {
+    if (timeLeft > 0) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (timeLeft === 0 && assessment) {
+      handleSubmit();
+    }
+  }, [timeLeft, assessment]);
+
   const handleSubmit = async () => {
     if (isSubmitting) return;
     
     setIsSubmitting(true);
     try {
-      const response = await api.post('/assessments/diagnostic/submit', {
+      const response = await api.post(`/assessments/category/${selectedCategory}/submit`, {
         answers: Object.values(answers)
       });
       
       setResults(response.data);
       setShowResults(true);
-      
-      // Update user skill level
-      updateUser({ skillLevel: response.data.skillLevel });
       
       showToast('Assessment completed successfully!', 'success');
     } catch (error) {
@@ -81,6 +89,10 @@ const DiagnosticTest = () => {
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
+
+  if (!selectedCategory) {
+    return <CategorySelection categories={categories} onSelect={setSelectedCategory} />;
+  }
 
   if (!assessment) {
     return (
@@ -102,7 +114,15 @@ const DiagnosticTest = () => {
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold">AI Skills Diagnostic Test</h1>
+          <div>
+            <h1 className="text-2xl font-bold">{categories.find(c => c.id === selectedCategory)?.name} Assessment</h1>
+            <button 
+              onClick={() => setSelectedCategory(null)}
+              className="text-blue-600 hover:text-blue-700 text-sm mt-1"
+            >
+              ← Back to Categories
+            </button>
+          </div>
           <div className="flex items-center space-x-4">
             <div className="flex items-center text-orange-600">
               <ClockIcon className="h-5 w-5 mr-2" />
@@ -199,6 +219,34 @@ const DiagnosticTest = () => {
     </div>
   );
 };
+
+const CategorySelection = ({ categories, onSelect }) => (
+  <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="text-center mb-12">
+      <h1 className="text-4xl font-bold text-gray-900 mb-4">Choose Assessment Category</h1>
+      <p className="text-xl text-gray-600">Select a technology area to test your knowledge</p>
+    </div>
+    
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {categories.map(category => (
+        <div
+          key={category.id}
+          onClick={() => onSelect(category.id)}
+          className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer border-2 border-transparent hover:border-blue-500"
+        >
+          <div className="text-center">
+            <div className="text-6xl mb-4">{category.icon}</div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">{category.name}</h3>
+            <p className="text-gray-600 mb-6">{category.description}</p>
+            <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">
+              Start Assessment
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
 const ResultsView = ({ results, onContinue }) => (
   <div className="max-w-4xl mx-auto px-4 py-8">
