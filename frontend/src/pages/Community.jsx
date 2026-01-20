@@ -9,10 +9,82 @@ const Community = () => {
   const [loading, setLoading] = useState(true);
   const [showNewPost, setShowNewPost] = useState(false);
   const [newPost, setNewPost] = useState({ title: '', content: '', type: 'discussion' });
+  const [activeTab, setActiveTab] = useState('all');
   const { showToast } = useToast();
 
   useEffect(() => {
-    fetchDiscussions();
+    // Initialize with sample data instead of API call
+    const sampleDiscussions = [
+      {
+        _id: '1',
+        title: 'How to implement backpropagation from scratch?',
+        content: 'I\'m trying to understand the math behind backpropagation and neural networks. Can someone explain the step-by-step process?',
+        type: 'question',
+        author: { profile: { firstName: 'John', lastName: 'Doe' } },
+        createdAt: new Date().toISOString(),
+        likes: ['1', '2'],
+        replies: [{ content: 'Great question!' }],
+        views: 45
+      },
+      {
+        _id: '2',
+        title: 'Best practices for data preprocessing',
+        content: 'What are the most important steps in data preprocessing for machine learning projects?',
+        type: 'question',
+        author: { profile: { firstName: 'Jane', lastName: 'Smith' } },
+        createdAt: new Date().toISOString(),
+        likes: ['1'],
+        replies: [],
+        views: 23
+      },
+      {
+        _id: '3',
+        title: 'AI-Powered Recipe Recommendation System',
+        content: 'Built a machine learning system that recommends recipes based on available ingredients and dietary preferences. Uses collaborative filtering and NLP.',
+        type: 'project',
+        author: { profile: { firstName: 'Mike', lastName: 'Johnson' } },
+        createdAt: new Date().toISOString(),
+        likes: ['1', '2', '3'],
+        replies: [{ content: 'Amazing work!' }, { content: 'Can you share the code?' }],
+        views: 78
+      },
+      {
+        _id: '4',
+        title: 'Computer Vision for Medical Diagnosis',
+        content: 'Developed a CNN model to detect skin cancer from dermoscopy images. Achieved 94% accuracy on test dataset.',
+        type: 'project',
+        author: { profile: { firstName: 'Sarah', lastName: 'Wilson' } },
+        createdAt: new Date().toISOString(),
+        likes: ['1', '2', '3', '4'],
+        replies: [{ content: 'Impressive results!' }],
+        views: 156
+      },
+      {
+        _id: '5',
+        title: 'Welcome to the AI Learning Community!',
+        content: 'Great to see so many passionate learners here. Let\'s share knowledge and help each other grow in AI and machine learning.',
+        type: 'discussion',
+        author: { profile: { firstName: 'Admin', lastName: 'Team' } },
+        createdAt: new Date().toISOString(),
+        likes: ['1', '2', '3', '4', '5'],
+        replies: [{ content: 'Thanks for creating this space!' }, { content: 'Excited to learn!' }],
+        views: 234
+      },
+      {
+        _id: '6',
+        title: 'Thoughts on the future of AGI',
+        content: 'What do you think about the current progress towards Artificial General Intelligence? Are we closer than we think?',
+        type: 'discussion',
+        author: { profile: { firstName: 'Alex', lastName: 'Chen' } },
+        createdAt: new Date().toISOString(),
+        likes: ['1', '2'],
+        replies: [{ content: 'Fascinating topic!' }],
+        views: 89
+      }
+    ];
+    
+    setDiscussions(sampleDiscussions);
+    setLoading(false);
   }, []);
 
   const fetchDiscussions = async () => {
@@ -73,55 +145,70 @@ const Community = () => {
       {/* Tabs */}
       <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
         <nav className="flex space-x-8">
-          <button className="py-2 px-1 border-b-2 border-blue-500 text-blue-600 font-medium">
+          <button 
+            onClick={() => setActiveTab('all')}
+            className={`py-2 px-1 border-b-2 font-medium ${
+              activeTab === 'all' 
+                ? 'border-blue-500 text-blue-600' 
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
             All Discussions
           </button>
-          <button className="py-2 px-1 text-gray-500 hover:text-gray-700">
+          <button 
+            onClick={() => setActiveTab('question')}
+            className={`py-2 px-1 border-b-2 font-medium ${
+              activeTab === 'question' 
+                ? 'border-blue-500 text-blue-600' 
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
             Questions
           </button>
-          <button className="py-2 px-1 text-gray-500 hover:text-gray-700">
+          <button 
+            onClick={() => setActiveTab('project')}
+            className={`py-2 px-1 border-b-2 font-medium ${
+              activeTab === 'project' 
+                ? 'border-blue-500 text-blue-600' 
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
             Projects
+          </button>
+          <button 
+            onClick={() => setActiveTab('discussion')}
+            className={`py-2 px-1 border-b-2 font-medium ${
+              activeTab === 'discussion' 
+                ? 'border-blue-500 text-blue-600' 
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Discussions
           </button>
         </nav>
       </div>
 
       {/* Discussions List */}
       <div className="space-y-4">
-        {discussions.length === 0 ? (
-          <div className="text-center py-12">
-            <ChatBubbleLeftIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">No discussions yet. Start the conversation!</p>
-          </div>
-        ) : (
-          discussions.map((discussion) => (
-            <DiscussionCard key={discussion._id} discussion={discussion} />
-          ))
-        )}
-      </div>
-
-      {/* Mock discussions for demo */}
-      <div className="space-y-4 mt-6">
-        <DiscussionCard discussion={{
-          _id: '1',
-          title: 'How to implement backpropagation from scratch?',
-          content: 'I\'m trying to understand the math behind backpropagation...',
-          author: { profile: { firstName: 'John', lastName: 'Doe' } },
-          createdAt: new Date().toISOString(),
-          likes: ['1', '2'],
-          replies: [{ content: 'Great question!' }],
-          views: 45
-        }} />
-        
-        <DiscussionCard discussion={{
-          _id: '2',
-          title: 'Best practices for data preprocessing',
-          content: 'What are the most important steps in data preprocessing?',
-          author: { profile: { firstName: 'Jane', lastName: 'Smith' } },
-          createdAt: new Date().toISOString(),
-          likes: ['1'],
-          replies: [],
-          views: 23
-        }} />
+        {(() => {
+          const filteredDiscussions = activeTab === 'all' 
+            ? discussions 
+            : discussions.filter(d => d.type === activeTab);
+            
+          return filteredDiscussions.length === 0 ? (
+            <div className="text-center py-12">
+              <ChatBubbleLeftIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">
+                No {activeTab === 'all' ? 'discussions' : activeTab + 's'} yet. Start the conversation!
+              </p>
+            </div>
+          ) : (
+            filteredDiscussions.map((discussion) => (
+              <DiscussionCard key={discussion._id} discussion={discussion} />
+            ))
+          );
+        })()
+        }
       </div>
 
       {/* New Post Modal */}
@@ -205,40 +292,56 @@ const Community = () => {
   );
 };
 
-const DiscussionCard = ({ discussion }) => (
-  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-    <div className="flex items-start justify-between">
-      <div className="flex-1">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-          {discussion.title}
-        </h3>
-        <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-          {discussion.content}
-        </p>
+const DiscussionCard = ({ discussion }) => {
+  const getTypeColor = (type) => {
+    switch (type) {
+      case 'question': return 'bg-orange-100 text-orange-800';
+      case 'project': return 'bg-green-100 text-green-800';
+      case 'discussion': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  return (
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <div className="flex items-center mb-2">
+            <span className={`px-2 py-1 rounded-full text-xs font-medium mr-3 ${getTypeColor(discussion.type)}`}>
+              {discussion.type.charAt(0).toUpperCase() + discussion.type.slice(1)}
+            </span>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            {discussion.title}
+          </h3>
+          <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
+            {discussion.content}
+          </p>
+          
+          <div className="flex items-center space-x-4 text-sm text-gray-500">
+            <span>
+              by {discussion.author?.profile?.firstName} {discussion.author?.profile?.lastName}
+            </span>
+            <span>•</span>
+            <span>{new Date(discussion.createdAt).toLocaleDateString()}</span>
+            <span>•</span>
+            <span>{discussion.views || 0} views</span>
+          </div>
+        </div>
         
         <div className="flex items-center space-x-4 text-sm text-gray-500">
-          <span>
-            by {discussion.author?.profile?.firstName} {discussion.author?.profile?.lastName}
-          </span>
-          <span>•</span>
-          <span>{new Date(discussion.createdAt).toLocaleDateString()}</span>
-          <span>•</span>
-          <span>{discussion.views || 0} views</span>
-        </div>
-      </div>
-      
-      <div className="flex items-center space-x-4 text-sm text-gray-500">
-        <div className="flex items-center">
-          <HeartIcon className="h-4 w-4 mr-1" />
-          {discussion.likes?.length || 0}
-        </div>
-        <div className="flex items-center">
-          <ChatBubbleLeftIcon className="h-4 w-4 mr-1" />
-          {discussion.replies?.length || 0}
+          <div className="flex items-center">
+            <HeartIcon className="h-4 w-4 mr-1" />
+            {discussion.likes?.length || 0}
+          </div>
+          <div className="flex items-center">
+            <ChatBubbleLeftIcon className="h-4 w-4 mr-1" />
+            {discussion.replies?.length || 0}
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default Community;
