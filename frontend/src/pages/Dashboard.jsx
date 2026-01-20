@@ -18,10 +18,10 @@ import {
 const Dashboard = () => {
   const { user } = useAuth();
   const { t } = useLanguage();
-  const [stats] = useState({
-    coursesCompleted: 3,
-    totalTimeSpent: 240,
-    averageScore: 85
+  const [stats, setStats] = useState({
+    coursesCompleted: user?.coursesCompleted || 0,
+    totalTimeSpent: user?.totalTimeSpent || 0,
+    averageScore: user?.averageScore || 0
   });
   const [selectedVideo, setSelectedVideo] = useState(null);
   

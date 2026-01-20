@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { PlayIcon, ClockIcon, UserIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '../hooks/useAuth';
+import { useToast } from '../hooks/useToast';
 import api from '../utils/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const CoursePage = () => {
   const { id } = useParams();
+  const { user, updateUser } = useAuth();
+  const { showToast } = useToast();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     fetchCourse();
-  }, [id]);
+    // Check if course is already completed
+    const completedCourses = user?.completedCourses || [];
+    setIsCompleted(completedCourses.includes(id));
+  }, [id, user]);
 
   const fetchCourse = async () => {
     try {
@@ -22,6 +30,24 @@ const CoursePage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCourseComplete = () => {
+    if (isCompleted) return;
+    
+    const completedCourses = user?.completedCourses || [];
+    const newCompletedCourses = [...completedCourses, id];
+    const coursesCompleted = (user?.coursesCompleted || 0) + 1;
+    const totalTimeSpent = (user?.totalTimeSpent || 0) + (course?.estimatedDuration || 0);
+    
+    updateUser({
+      completedCourses: newCompletedCourses,
+      coursesCompleted,
+      totalTimeSpent
+    });
+    
+    setIsCompleted(true);
+    showToast('Course completed! 🎉', 'success');
   };
 
   if (loading) return <LoadingSpinner />;
@@ -70,8 +96,16 @@ const CoursePage = () => {
         </div>
 
         <div className="mt-8">
-          <button className="btn-primary">
-            Start Learning
+          <button 
+            onClick={handleCourseComplete}
+            disabled={isCompleted}
+            className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+              isCompleted 
+                ? 'bg-green-100 text-green-800 cursor-not-allowed' 
+                : 'bg-blue-600 text-white hover:bg-blue-700'
+            }`}
+          >
+            {isCompleted ? '✓ Course Completed' : 'Mark as Complete'}
           </button>
         </div>
       </div>
