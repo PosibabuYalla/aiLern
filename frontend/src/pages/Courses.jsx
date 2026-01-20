@@ -99,17 +99,19 @@ const Courses = () => {
   const getFilteredVideos = () => {
     let videosToShow = [];
     
-    if (selectedCategory === 'all') {
-      videosToShow = Object.values(allVideos).flat();
-    } else {
-      videosToShow = allVideos[selectedCategory] || [];
-    }
-    
     if (searchTerm) {
-      videosToShow = videosToShow.filter(video =>
+      // When searching, show all matching videos regardless of category
+      videosToShow = Object.values(allVideos).flat().filter(video =>
         video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         video.description.toLowerCase().includes(searchTerm.toLowerCase())
       );
+    } else {
+      // When not searching, filter by category
+      if (selectedCategory === 'all') {
+        videosToShow = Object.values(allVideos).flat();
+      } else {
+        videosToShow = allVideos[selectedCategory] || [];
+      }
     }
     
     return videosToShow;
