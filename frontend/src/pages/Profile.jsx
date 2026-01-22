@@ -735,6 +735,33 @@ const Profile = () => {
               <button onClick={handleSettingsSubmit} className="btn-primary">
                 Save Settings
               </button>
+              
+              <button 
+                onClick={() => {
+                  setSettings({
+                    difficulty: 'intermediate',
+                    pace: 'normal',
+                    languages: ['Python', 'JavaScript'],
+                    emailNotifications: true,
+                    courseReminders: true,
+                    achievementAlerts: true,
+                    communityUpdates: false,
+                    darkMode: false,
+                    reducedMotion: false,
+                    fontSize: 'medium',
+                    showProfile: true,
+                    shareProgress: true,
+                    allowMessages: true,
+                    aiFeedback: 'balanced',
+                    autoSuggest: true,
+                    errorDetection: true
+                  });
+                  showToast('Settings reset to defaults', 'success');
+                }}
+                className="btn-secondary ml-4"
+              >
+                Reset to Defaults
+              </button>
             </div>
           )}
         </div>
