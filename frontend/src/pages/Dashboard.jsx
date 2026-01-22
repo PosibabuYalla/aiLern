@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../hooks/useLanguage';
+import { useToast } from '../hooks/useToast';
 import { 
   BookOpenIcon, 
   ChartBarIcon, 
@@ -10,50 +12,88 @@ import {
   ClockIcon,
   StarIcon,
   ArrowRightIcon,
-  SparklesIcon
+  SparklesIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 
 const Dashboard = () => {
   const { user } = useAuth();
   const { t } = useLanguage();
-  const [stats] = useState({
-    coursesCompleted: 3,
-    totalTimeSpent: 240,
-    averageScore: 85
+  const [stats, setStats] = useState({
+    coursesCompleted: user?.coursesCompleted || 0,
+    totalTimeSpent: user?.totalTimeSpent || 0,
+    averageScore: user?.averageScore || 0
   });
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [completedVideos, setCompletedVideos] = useState(user?.completedVideos || []);
+  const { showToast } = useToast();
+  const addActivity = (title, type) => {
+    const newActivity = {
+      id: Date.now(),
+      title,
+      timestamp: new Date(),
+      type
+    };
+    
+    const updatedActivity = [newActivity, ...recentActivity].slice(0, 5); // Keep only last 5 activities
+    setRecentActivity(updatedActivity);
+    
+    // Update user profile with new activity
+    updateUser({ recentActivity: updatedActivity });
+  };
+
+  const handleVideoComplete = (video) => {
+    if (completedVideos.includes(video.videoId)) return;
+    
+    const newCompletedVideos = [...completedVideos, video.videoId];
+    const currentPoints = user?.gamification?.points || 0;
+    const videoPoints = 25; // 25 points per tutorial video
+    const newPoints = currentPoints + videoPoints;
+    
+    updateUser({
+      completedVideos: newCompletedVideos,
+      gamification: {
+        ...user?.gamification,
+        points: newPoints
+      }
+    });
+    
+    setCompletedVideos(newCompletedVideos);
+    addActivity(`Completed tutorial: ${video.title}`, 'completion');
+    showToast(`Tutorial completed! +${videoPoints} points earned! ⭐`, 'success');
+  };
   
   const [recommendedCourses] = useState([
     {
-      _id: '1',
+      _id: '19',
       title: 'Machine Learning Fundamentals',
       description: 'Learn the core concepts of ML',
       difficulty: 'intermediate',
-      estimatedDuration: 180,
+      estimatedDuration: 400,
+      videoId: '7eh4d6sabA0',
       thumbnail: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400&h=300&fit=crop'
     },
     {
-      _id: '2',
+      _id: '20',
       title: 'Deep Learning with Python',
       description: 'Master neural networks and deep learning',
       difficulty: 'advanced',
-      estimatedDuration: 240,
+      estimatedDuration: 450,
+      videoId: 'tPYj3fFJGjk',
       thumbnail: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=300&fit=crop'
     },
     {
-      _id: '3',
-      title: 'AI Ethics and Bias',
-      description: 'Understanding responsible AI development',
+      _id: '2',
+      title: 'Python for Beginners',
+      description: 'Complete introduction to Python programming',
       difficulty: 'beginner',
-      estimatedDuration: 120,
+      estimatedDuration: 200,
+      videoId: 'rfscVS0vtbw',
       thumbnail: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop'
     }
   ]);
 
-  const [recentActivity] = useState([
-    { title: 'Completed Python Basics', timestamp: new Date(), type: 'completion' },
-    { title: 'Started ML Fundamentals', timestamp: new Date(), type: 'start' },
-    { title: 'Earned Python Badge', timestamp: new Date(), type: 'achievement' }
-  ]);
+  const [recentActivity, setRecentActivity] = useState(user?.recentActivity || []);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -80,7 +120,7 @@ const Dashboard = () => {
                   </div>
                   <div className="flex items-center bg-white/20 rounded-full px-4 py-2">
                     <SparklesIcon className="h-5 w-5 mr-2" />
-                    <span className="font-semibold">{user?.gamification?.points || 1250} points</span>
+                    <span className="font-semibold">{user?.gamification?.points || 0} points</span>
                   </div>
                 </div>
               </div>
@@ -121,7 +161,7 @@ const Dashboard = () => {
           <StatCard
             icon={TrophyIcon}
             title="Total Points"
-            value={user?.gamification?.points || 1250}
+            value={user?.gamification?.points || 0}
             color="from-yellow-500 to-yellow-600"
             bgColor="bg-yellow-50"
             textColor="text-yellow-600"
@@ -147,13 +187,15 @@ const Dashboard = () => {
                   Recommended for You
                 </h2>
                 <button className="text-blue-600 hover:text-blue-700 font-medium flex items-center">
-                  View All
-                  <ArrowRightIcon className="ml-1 h-4 w-4" />
+                  <Link to="/courses" className="flex items-center">
+                    View All
+                    <ArrowRightIcon className="ml-1 h-4 w-4" />
+                  </Link>
                 </button>
               </div>
               <div className="space-y-6">
                 {recommendedCourses.map((course) => (
-                  <CourseCard key={course._id} course={course} />
+                  <CourseCard key={course._id} course={course} onVideoClick={setSelectedVideo} />
                 ))}
               </div>
             </div>
@@ -175,21 +217,83 @@ const Dashboard = () => {
             <div className="bg-white rounded-2xl shadow-lg p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h3>
               <div className="space-y-3">
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center">
-                  <PlayIcon className="h-5 w-5 mr-2" />
-                  Continue Learning
-                </button>
-                <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors duration-200">
-                  Take Assessment
-                </button>
-                <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors duration-200">
-                  Join Community
-                </button>
+                <Link to="/courses">
+                  <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center">
+                    <PlayIcon className="h-5 w-5 mr-2" />
+                    Continue Learning
+                  </button>
+                </Link>
+                <Link to="/diagnostic">
+                  <button className="w-full bg-gray-100 hover:bg-blue-600 hover:text-white text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors duration-200">
+                    Take Assessment
+                  </button>
+                </Link>
+                <Link to="/community">
+                  <button className="w-full bg-gray-100 hover:bg-blue-600 hover:text-white text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors duration-200">
+                    Join Community
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
         </div>
       </div>
+      
+      {/* Video Modal */}
+      {selectedVideo && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h3 className="text-2xl font-bold text-gray-900">{selectedVideo.title}</h3>
+              <button
+                onClick={() => setSelectedVideo(null)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <XMarkIcon className="h-6 w-6 text-gray-500" />
+              </button>
+            </div>
+            <div className="aspect-video">
+              <iframe
+                src={`https://www.youtube.com/embed/${selectedVideo.videoId}?autoplay=1`}
+                title={selectedVideo.title}
+                className="w-full h-full"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-600 mb-4">{selectedVideo.description}</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4 text-sm text-gray-500">
+                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium">
+                    {selectedVideo.difficulty}
+                  </span>
+                  <span>{selectedVideo.estimatedDuration} min</span>
+                  <span className="text-yellow-500">⭐ 25 points</span>
+                </div>
+                <div className="flex space-x-3">
+                  {!completedVideos.includes(selectedVideo.videoId) && (
+                    <button
+                      onClick={() => handleVideoComplete(selectedVideo)}
+                      className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                    >
+                      Mark Complete
+                    </button>
+                  )}
+                  <Link
+                    to={`/course/${selectedVideo._id}`}
+                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    onClick={() => setSelectedVideo(null)}
+                  >
+                    View Full Course
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -210,8 +314,8 @@ const StatCard = ({ icon: Icon, title, value, color, bgColor, textColor, isText 
   </div>
 );
 
-const CourseCard = ({ course }) => (
-  <div className="group flex items-center p-6 border border-gray-200 rounded-2xl hover:border-blue-300 hover:shadow-lg transition-all duration-300 cursor-pointer">
+const CourseCard = ({ course, onVideoClick }) => (
+  <div className="group flex items-center p-6 border border-gray-200 rounded-2xl hover:border-blue-300 hover:shadow-lg transition-all duration-300">
     <img 
       src={course.thumbnail} 
       alt={course.title}
@@ -229,10 +333,19 @@ const CourseCard = ({ course }) => (
         <span>{course.estimatedDuration} min</span>
       </div>
     </div>
-    <div className="ml-4">
-      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-600 transition-colors duration-200">
-        <PlayIcon className="h-6 w-6 text-blue-600 group-hover:text-white transition-colors duration-200" />
-      </div>
+    <div className="ml-4 flex space-x-2">
+      <button
+        onClick={() => onVideoClick(course)}
+        className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors duration-200 group"
+        title="Watch Video"
+      >
+        <PlayIcon className="h-6 w-6 text-red-600 group-hover:text-white transition-colors duration-200" />
+      </button>
+      <Link to={`/course/${course._id}`}>
+        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-600 transition-colors duration-200">
+          <ArrowRightIcon className="h-6 w-6 text-blue-600 group-hover:text-white transition-colors duration-200" />
+        </div>
+      </Link>
     </div>
   </div>
 );

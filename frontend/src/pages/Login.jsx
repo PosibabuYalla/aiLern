@@ -15,6 +15,17 @@ const Login = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // Load saved credentials on component mount
+  React.useEffect(() => {
+    const savedCredentials = localStorage.getItem('rememberedCredentials');
+    if (savedCredentials) {
+      const { email, password } = JSON.parse(savedCredentials);
+      setFormData({ email, password });
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleChange = (e) => {
     setFormData(prev => ({
@@ -31,10 +42,20 @@ const Login = () => {
       const result = await login(formData.email, formData.password);
       
       if (result.success) {
+        // Save credentials if remember me is checked
+        if (rememberMe) {
+          localStorage.setItem('rememberedCredentials', JSON.stringify({
+            email: formData.email,
+            password: formData.password
+          }));
+        } else {
+          localStorage.removeItem('rememberedCredentials');
+        }
+        
         showToast('Welcome back! 🎉', 'success');
         navigate('/dashboard');
       } else {
-        showToast(result.message, 'error');
+        showToast('Invalid email address or password', 'error');
       }
     } catch (error) {
       showToast('Login failed. Please try again.', 'error');
@@ -116,6 +137,8 @@ const Login = () => {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">

@@ -33,24 +33,54 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Database connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/deepu-ai-course', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// Database connection with better error handling
+const connectDB = async () => {
+  try {
+    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ailern-db';
+    await mongoose.connect(mongoURI, {
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+      socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+    });
+    console.log('✅ Connected to MongoDB');
+  } catch (error) {
+    console.warn('⚠️  MongoDB connection failed:', error.message);
+    console.log('📝 Server will run without database functionality');
+    console.log('💡 To fix: Install MongoDB locally or use MongoDB Atlas');
+  }
+};
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/courses', courseRoutes);
-app.use('/api/assessments', assessmentRoutes);
-app.use('/api/progress', progressRoutes);
-app.use('/api/ai', aiRoutes);
-app.use('/api/community', communityRoutes);
+// Connect to database
+connectDB();
 
-// Health check
+// Middleware to check database connection
+const checkDBConnection = (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({ 
+      message: 'Database unavailable. Please check MongoDB connection.',
+      error: 'DB_UNAVAILABLE'
+    });
+  }
+  next();
+};
+
+// Routes with database check
+app.use('/api/auth', checkDBConnection, authRoutes);
+app.use('/api/users', checkDBConnection, userRoutes);
+app.use('/api/courses', checkDBConnection, courseRoutes);
+app.use('/api/assessments', checkDBConnection, assessmentRoutes);
+app.use('/api/progress', checkDBConnection, progressRoutes);
+app.use('/api/ai', aiRoutes); // AI routes might work without DB
+app.use('/api/community', checkDBConnection, communityRoutes);
+
+// Health check with database status
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+  const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    database: dbStatus,
+    message: dbStatus === 'disconnected' ? 'Server running without database' : 'All systems operational'
+  });
 });
 
 // Error handling middleware
@@ -63,8 +93,16 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received');
+  server.close(() => {
+    console.log('Process terminated');
+  });
 });
 
 module.exports = app;

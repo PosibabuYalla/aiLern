@@ -1,17 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 import { 
   UserCircleIcon, 
   CogIcon, 
   TrophyIcon, 
-  ChartBarIcon 
+  ChartBarIcon,
+  CameraIcon,
+  PencilIcon,
+  TrashIcon
 } from '@heroicons/react/24/outline';
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
   const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState('profile');
+  const [showImageOptions, setShowImageOptions] = useState(false);
+  const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
     firstName: user?.profile?.firstName || '',
     lastName: user?.profile?.lastName || '',
@@ -30,6 +35,41 @@ const Profile = () => {
     }
   };
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageUrl = e.target.result;
+        updateUser({ 
+          profile: { 
+            ...user.profile, 
+            avatar: imageUrl 
+          } 
+        });
+        showToast('Profile picture updated!', 'success');
+        setShowImageOptions(false);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDeleteImage = () => {
+    updateUser({ 
+      profile: { 
+        ...user.profile, 
+        avatar: null 
+      } 
+    });
+    showToast('Profile picture removed!', 'success');
+    setShowImageOptions(false);
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+    setShowImageOptions(false);
+  };
+
   const tabs = [
     { id: 'profile', label: 'Profile', icon: UserCircleIcon },
     { id: 'achievements', label: 'Achievements', icon: TrophyIcon },
@@ -43,11 +83,41 @@ const Profile = () => {
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-8">
           <div className="flex items-center space-x-4">
-            <img
-              src={user?.profile?.avatar || '/api/placeholder/80/80'}
-              alt="Profile"
-              className="w-20 h-20 rounded-full border-4 border-white"
-            />
+            <div className="relative">
+              <img
+                src={user?.profile?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'}
+                alt="Profile"
+                className="w-20 h-20 rounded-full border-4 border-white object-cover"
+              />
+              <button
+                onClick={() => setShowImageOptions(!showImageOptions)}
+                className="absolute -bottom-1 -right-1 bg-white rounded-full p-2 shadow-lg hover:bg-gray-50 transition-colors"
+              >
+                <CameraIcon className="h-4 w-4 text-gray-600" />
+              </button>
+              
+              {/* Image Options Dropdown */}
+              {showImageOptions && (
+                <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-10">
+                  <button
+                    onClick={triggerFileInput}
+                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <PencilIcon className="h-4 w-4 mr-2" />
+                    Upload New
+                  </button>
+                  {user?.profile?.avatar && (
+                    <button
+                      onClick={handleDeleteImage}
+                      className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                    >
+                      <TrashIcon className="h-4 w-4 mr-2" />
+                      Remove
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
             <div className="text-white">
               <h1 className="text-2xl font-bold">
                 {user?.profile?.firstName} {user?.profile?.lastName}
@@ -57,6 +127,15 @@ const Profile = () => {
               </p>
             </div>
           </div>
+          
+          {/* Hidden File Input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="hidden"
+          />
         </div>
 
         {/* Tabs */}

@@ -1,15 +1,25 @@
 const express = require('express');
-const OpenAI = require('openai');
 const auth = require('../middleware/auth');
 const router = express.Router();
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+// Initialize OpenAI only if API key is available
+let openai = null;
+if (process.env.OPENAI_API_KEY) {
+  const OpenAI = require('openai');
+  openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+  });
+}
 
 // AI Q&A endpoint
 router.post('/ask', auth, async (req, res) => {
   try {
+    if (!openai) {
+      return res.status(503).json({ 
+        message: 'AI service not configured. Please add OPENAI_API_KEY to environment variables.' 
+      });
+    }
+
     const { question, context } = req.body;
 
     const systemPrompt = `You are an AI tutor specializing in artificial intelligence, machine learning, and programming. 
@@ -42,6 +52,12 @@ router.post('/ask', auth, async (req, res) => {
 // Code review endpoint
 router.post('/code-review', auth, async (req, res) => {
   try {
+    if (!openai) {
+      return res.status(503).json({ 
+        message: 'AI service not configured. Please add OPENAI_API_KEY to environment variables.' 
+      });
+    }
+
     const { code, language, context } = req.body;
 
     const systemPrompt = `You are a code review AI. Analyze the provided ${language} code and provide:

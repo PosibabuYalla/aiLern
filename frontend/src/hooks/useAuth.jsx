@@ -15,56 +15,22 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-  }, []);
-
-  const login = async (email, password) => {
-    setLoading(true);
-    
-    // Mock login - accept any email/password
-    setTimeout(() => {
-      const mockUser = {
-        id: '1',
-        email,
+    // Initialize with demo user if no users exist
+    const storedUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    if (storedUsers.length === 0) {
+      const demoUser = {
+        id: 'demo-user',
+        email: 'student@deepu.ai',
+        password: 'password123',
         profile: {
-          firstName: email.split('@')[0],
-          lastName: 'User',
+          firstName: 'Demo',
+          lastName: 'Student',
           language: 'en'
         },
-        skillLevel: 'intermediate',
-        gamification: {
-          points: 1250,
-          level: 3,
-          badges: ['first-course', 'python-master'],
-          streak: 7
-        }
-      };
-      
-      setUser(mockUser);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      setLoading(false);
-    }, 1000);
-    
-    return { success: true };
-  };
-
-  const register = async (userData) => {
-    setLoading(true);
-    
-    // Mock registration
-    setTimeout(() => {
-      const mockUser = {
-        id: '1',
-        email: userData.email,
-        profile: {
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          language: userData.language || 'en'
-        },
         skillLevel: 'beginner',
+        coursesCompleted: 0,
+        totalTimeSpent: 0,
+        completedVideos: [],
         gamification: {
           points: 0,
           level: 1,
@@ -72,17 +38,113 @@ export const AuthProvider = ({ children }) => {
           streak: 0
         }
       };
-      
-      setUser(mockUser);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      setLoading(false);
-    }, 1000);
+      localStorage.setItem('registeredUsers', JSON.stringify([demoUser]));
+    }
     
-    return { success: true };
+    // Only restore user session if valid token exists
+    const savedUser = localStorage.getItem('user');
+    const authToken = localStorage.getItem('authToken');
+    
+    if (savedUser && authToken) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  const login = async (email, password) => {
+    setLoading(true);
+    
+    // Check stored users for valid credentials
+    const storedUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const validUser = storedUsers.find(user => 
+      user.email === email && user.password === password
+    );
+    
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        if (validUser) {
+          const userProfile = {
+            id: validUser.id,
+            email: validUser.email,
+            profile: validUser.profile,
+            skillLevel: validUser.skillLevel || 'beginner',
+            coursesCompleted: validUser.coursesCompleted || 0,
+            totalTimeSpent: validUser.totalTimeSpent || 0,
+            completedVideos: validUser.completedVideos || [],
+            gamification: validUser.gamification || {
+              points: 0,
+              level: 1,
+              badges: [],
+              streak: 0
+            }
+          };
+          
+          setUser(userProfile);
+          localStorage.setItem('user', JSON.stringify(userProfile));
+          localStorage.setItem('authToken', 'valid-session-' + Date.now());
+          setLoading(false);
+          resolve({ success: true });
+        } else {
+          setLoading(false);
+          resolve({ success: false, message: 'Invalid email or password' });
+        }
+      }, 1000);
+    });
+  };
+
+  const register = async (userData) => {
+    setLoading(true);
+    
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // Check if user already exists
+        const storedUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+        const existingUser = storedUsers.find(user => user.email === userData.email);
+        
+        if (existingUser) {
+          setLoading(false);
+          resolve({ success: false, message: 'User already exists with this email' });
+          return;
+        }
+        
+        const newUser = {
+          id: Date.now().toString(),
+          email: userData.email,
+          password: userData.password,
+          profile: {
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            language: userData.language || 'en'
+          },
+          skillLevel: 'beginner',
+          coursesCompleted: 0,
+          totalTimeSpent: 0,
+          completedVideos: [],
+          gamification: {
+            points: 0,
+            level: 1,
+            badges: [],
+            streak: 0
+          }
+        };
+        
+        // Store user in registered users list
+        const updatedUsers = [...storedUsers, newUser];
+        localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers));
+        
+        // Set as current user
+        setUser(newUser);
+        localStorage.setItem('user', JSON.stringify(newUser));
+        localStorage.setItem('authToken', 'valid-session-' + Date.now());
+        setLoading(false);
+        resolve({ success: true });
+      }, 1000);
+    });
   };
 
   const logout = () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('rememberedCredentials');
     setUser(null);
   };
 
@@ -90,6 +152,13 @@ export const AuthProvider = ({ children }) => {
     const updatedUser = { ...user, ...userData };
     setUser(updatedUser);
     localStorage.setItem('user', JSON.stringify(updatedUser));
+    
+    // Also update the user in registeredUsers list
+    const storedUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const updatedUsers = storedUsers.map(storedUser => 
+      storedUser.id === user.id ? { ...storedUser, ...userData } : storedUser
+    );
+    localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers));
   };
 
   const value = {
