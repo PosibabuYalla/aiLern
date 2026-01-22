@@ -43,15 +43,12 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
+            <Link to="/" className="flex items-center">
               <img 
                 src={logo} 
-                alt="aiLern Logo" 
-                className="w-12 h-12 rounded-lg object-cover"
+                alt="Logo" 
+                className="w-16 h-16 rounded-lg object-cover object-center"
               />
-              <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                aiLern
-              </span>
             </Link>
           </div>
 
