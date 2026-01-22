@@ -41,16 +41,12 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('registeredUsers', JSON.stringify([demoUser]));
     }
     
+    // Only restore user session if valid token exists
     const savedUser = localStorage.getItem('user');
-    if (savedUser) {
+    const authToken = localStorage.getItem('authToken');
+    
+    if (savedUser && authToken) {
       setUser(JSON.parse(savedUser));
-    } else {
-      // Check for remembered credentials and auto-login
-      const savedCredentials = localStorage.getItem('rememberedCredentials');
-      if (savedCredentials) {
-        const { email, password } = JSON.parse(savedCredentials);
-        login(email, password);
-      }
     }
   }, []);
 
@@ -84,6 +80,7 @@ export const AuthProvider = ({ children }) => {
           
           setUser(userProfile);
           localStorage.setItem('user', JSON.stringify(userProfile));
+          localStorage.setItem('authToken', 'valid-session-' + Date.now());
           setLoading(false);
           resolve({ success: true });
         } else {
@@ -137,6 +134,7 @@ export const AuthProvider = ({ children }) => {
         // Set as current user
         setUser(newUser);
         localStorage.setItem('user', JSON.stringify(newUser));
+        localStorage.setItem('authToken', 'valid-session-' + Date.now());
         setLoading(false);
         resolve({ success: true });
       }, 1000);
@@ -145,6 +143,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('authToken');
     localStorage.removeItem('rememberedCredentials');
     setUser(null);
   };

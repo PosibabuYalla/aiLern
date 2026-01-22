@@ -9,6 +9,7 @@ import {
   ChevronDownIcon,
   GlobeAltIcon
 } from '@heroicons/react/24/outline';
+import logo from '../assets/images/logo.jpeg';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -27,7 +28,7 @@ const Navbar = () => {
   const navLinks = [
     { path: '/dashboard', label: t('dashboard') },
     { path: '/courses', label: t('courses') },
-    { path: '/tutorials', label: 'Tutorials' },
+    { path: '/tutorials', label: 'Generate Your Own Tutorial' },
     { path: '/community', label: t('community') }
   ];
 
@@ -43,11 +44,13 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">D</span>
-              </div>
-              <span className="text-xl font-bold text-gray-900 dark:text-white">
-                Deepu AI
+              <img 
+                src={logo} 
+                alt="aiLern Logo" 
+                className="w-12 h-12 rounded-lg object-cover"
+              />
+              <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                aiLern
               </span>
             </Link>
           </div>

@@ -51,7 +51,7 @@ const Tutorials = () => {
     // Add to recent activity
     const newActivity = {
       id: Date.now(),
-      title: `Requested tutorial: ${requestForm.topic}`,
+      title: `Generated tutorial: ${requestForm.topic}`,
       timestamp: new Date(),
       type: 'request'
     };
@@ -105,7 +105,7 @@ const Tutorials = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                Custom Tutorials
+                Generate Your Own Tutorial
               </h1>
               <p className="text-xl text-gray-600">
                 Request personalized video tutorials on any topic you want to learn
@@ -116,7 +116,7 @@ const Tutorials = () => {
               className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors flex items-center"
             >
               <PlusIcon className="h-5 w-5 mr-2" />
-              Request Tutorial
+              Generate Tutorial
             </button>
           </div>
         </div>
@@ -132,12 +132,12 @@ const Tutorials = () => {
           <div className="text-center py-12">
             <SparklesIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-medium text-gray-900 mb-2">No tutorials yet</h3>
-            <p className="text-gray-600 mb-6">Request your first custom tutorial to get started</p>
+            <p className="text-gray-600 mb-6">Generate your first custom tutorial to get started</p>
             <button
               onClick={() => setShowRequestForm(true)}
               className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors"
             >
-              Request Tutorial
+              Generate Tutorial
             </button>
           </div>
         )}
@@ -147,7 +147,7 @@ const Tutorials = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
               <div className="flex items-center justify-between p-6 border-b">
-                <h3 className="text-2xl font-bold text-gray-900">Request Custom Tutorial</h3>
+                <h3 className="text-2xl font-bold text-gray-900">Generate Custom Tutorial</h3>
                 <button
                   onClick={() => setShowRequestForm(false)}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"

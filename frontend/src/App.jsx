@@ -22,12 +22,22 @@ import LessonPage from './pages/LessonPage';
 import Community from './pages/Community';
 import Profile from './pages/Profile';
 
-// Protected Route Component
-const ProtectedRoute = ({ children }) => {
+// Auth Guard Component
+const AuthGuard = ({ children }) => {
   const { user, loading } = useAuth();
   
   if (loading) return <LoadingSpinner />;
-  if (!user) return <Navigate to="/login" />;
+  if (!user) return <Navigate to="/login" replace />;
+  
+  return children;
+};
+
+// Public Route Component (redirects to dashboard if already logged in)
+const PublicRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) return <LoadingSpinner />;
+  if (user) return <Navigate to="/dashboard" replace />;
   
   return children;
 };
@@ -42,53 +52,72 @@ function App() {
               <Navbar />
               <main>
                 <Routes>
-                  {/* Public Routes */}
-                  <Route path="/" element={<Landing />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  {/* Public Routes - redirect to dashboard if logged in */}
+                  <Route path="/" element={
+                    <PublicRoute>
+                      <Landing />
+                    </PublicRoute>
+                  } />
+                  <Route path="/login" element={
+                    <PublicRoute>
+                      <Login />
+                    </PublicRoute>
+                  } />
+                  <Route path="/register" element={
+                    <PublicRoute>
+                      <Register />
+                    </PublicRoute>
+                  } />
+                  <Route path="/forgot-password" element={
+                    <PublicRoute>
+                      <ForgotPassword />
+                    </PublicRoute>
+                  } />
                   
-                  {/* Protected Routes */}
+                  {/* Protected Routes - require authentication */}
                   <Route path="/dashboard" element={
-                    <ProtectedRoute>
+                    <AuthGuard>
                       <Dashboard />
-                    </ProtectedRoute>
+                    </AuthGuard>
                   } />
                   <Route path="/diagnostic" element={
-                    <ProtectedRoute>
+                    <AuthGuard>
                       <DiagnosticTest />
-                    </ProtectedRoute>
+                    </AuthGuard>
                   } />
                   <Route path="/courses" element={
-                    <ProtectedRoute>
+                    <AuthGuard>
                       <Courses />
-                    </ProtectedRoute>
+                    </AuthGuard>
                   } />
                   <Route path="/tutorials" element={
-                    <ProtectedRoute>
+                    <AuthGuard>
                       <Tutorials />
-                    </ProtectedRoute>
+                    </AuthGuard>
                   } />
                   <Route path="/course/:id" element={
-                    <ProtectedRoute>
+                    <AuthGuard>
                       <CoursePage />
-                    </ProtectedRoute>
+                    </AuthGuard>
                   } />
                   <Route path="/lesson/:id" element={
-                    <ProtectedRoute>
+                    <AuthGuard>
                       <LessonPage />
-                    </ProtectedRoute>
+                    </AuthGuard>
                   } />
                   <Route path="/community" element={
-                    <ProtectedRoute>
+                    <AuthGuard>
                       <Community />
-                    </ProtectedRoute>
+                    </AuthGuard>
                   } />
                   <Route path="/profile" element={
-                    <ProtectedRoute>
+                    <AuthGuard>
                       <Profile />
-                    </ProtectedRoute>
+                    </AuthGuard>
                   } />
+                  
+                  {/* Catch all route - redirect to login */}
+                  <Route path="*" element={<Navigate to="/login" replace />} />
                 </Routes>
               </main>
             </div>

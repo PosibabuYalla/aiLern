@@ -206,6 +206,9 @@ router.post('/category/:category/submit', auth, async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
+
+// Get diagnostic assessment
+router.get('/diagnostic', auth, async (req, res) => {
   try {
     // Sample assessment with questions for each technology section
     const assessment = {

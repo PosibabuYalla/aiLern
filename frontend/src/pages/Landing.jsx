@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   AcademicCapIcon, 
@@ -9,8 +9,12 @@ import {
   CheckIcon,
   ArrowRightIcon
 } from '@heroicons/react/24/outline';
+import logo from '../assets/images/logo.jpeg';
+import DemoVideo from '../components/DemoVideo';
 
 const Landing = () => {
+  const [isDemoOpen, setIsDemoOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -34,7 +38,10 @@ const Landing = () => {
                 Start Learning Free
                 <ArrowRightIcon className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <button className="group border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-semibold py-4 px-8 rounded-xl text-lg transition-all duration-300 flex items-center">
+              <button 
+                onClick={() => setIsDemoOpen(true)}
+                className="group border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-semibold py-4 px-8 rounded-xl text-lg transition-all duration-300 flex items-center"
+              >
                 <PlayIcon className="mr-2 h-5 w-5" />
                 Watch Demo
               </button>
@@ -53,7 +60,7 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Why Choose Deepu AI?
+              Why Choose aiLern?
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Experience the future of AI education with cutting-edge technology
@@ -191,16 +198,24 @@ const Landing = () => {
       <div className="bg-gray-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center mb-4">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mr-3">
-              <span className="text-white font-bold text-lg">D</span>
-            </div>
-            <span className="text-2xl font-bold">Deepu AI</span>
+            <img 
+              src={logo} 
+              alt="aiLern Logo" 
+              className="w-12 h-12 rounded-lg object-cover mr-3"
+            />
+            <span className="text-2xl font-bold">aiLern</span>
           </div>
           <p className="text-gray-400">
-            © 2024 Deepu AI Course Generator. All rights reserved.
+            © 2024 aiLern - AI-Powered Learning Platform. All rights reserved.
           </p>
         </div>
       </div>
+
+      {/* Demo Video Modal */}
+      <DemoVideo 
+        isOpen={isDemoOpen} 
+        onClose={() => setIsDemoOpen(false)} 
+      />
     </div>
   );
 };
