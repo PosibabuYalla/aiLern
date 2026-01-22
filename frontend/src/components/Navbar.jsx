@@ -110,9 +110,9 @@ const Navbar = () => {
                   className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-blue-600"
                 >
                   <img
-                    src={user.profile?.avatar || '/api/placeholder/32/32'}
+                    src={user.profile?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face'}
                     alt="Profile"
-                    className="w-8 h-8 rounded-full"
+                    className="w-8 h-8 rounded-full object-cover"
                   />
                   <span className="hidden md:block text-sm">
                     {user.profile?.firstName}
