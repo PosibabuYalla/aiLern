@@ -9,7 +9,7 @@ import {
   CheckIcon,
   ArrowRightIcon
 } from '@heroicons/react/24/outline';
-import logo from '../assets/images/logo.jpeg';
+import logo from '../assets/images/logo.png';
 import DemoVideo from '../components/DemoVideo';
 
 const Landing = () => {
