@@ -32,10 +32,60 @@ export const AuthProvider = ({ children }) => {
         totalTimeSpent: 0,
         completedVideos: [],
         gamification: {
-          points: 0,
-          level: 1,
-          badges: [],
-          streak: 0
+          points: 1250,
+          level: 3,
+          badges: ['first-course', 'python-master', 'streak-7', 'code-reviewer'],
+          streak: 7
+        },
+        progress: {
+          coursesCompleted: 2,
+          coursesInProgress: 1,
+          lessonsCompleted: 15,
+          exercisesSolved: 28,
+          projectsBuilt: 3,
+          codeReviews: 5,
+          communityHelps: 8,
+          studyHours: 24
+        },
+        skills: {
+          python: 75,
+          javascript: 60,
+          react: 45,
+          aiml: 30
+        },
+        performance: {
+          averageScore: 87,
+          bestStreak: 12,
+          timeSaved: 18,
+          communityRank: 156,
+          efficiency: 92
+        },
+        analytics: {
+          weeklyHours: [2, 3, 1, 4, 2, 5, 3]
+        },
+        recentActivity: [
+          { type: 'lesson', action: 'Completed Python Functions', time: '2 hours ago' },
+          { type: 'achievement', action: 'Earned Code Reviewer badge', time: '1 day ago' },
+          { type: 'project', action: 'Built Weather App', time: '2 days ago' },
+          { type: 'community', action: 'Helped 3 students', time: '3 days ago' }
+        ],
+        settings: {
+          difficulty: 'intermediate',
+          pace: 'normal',
+          languages: ['Python', 'JavaScript'],
+          emailNotifications: true,
+          courseReminders: true,
+          achievementAlerts: true,
+          communityUpdates: false,
+          darkMode: false,
+          reducedMotion: false,
+          fontSize: 'medium',
+          showProfile: true,
+          shareProgress: true,
+          allowMessages: true,
+          aiFeedback: 'balanced',
+          autoSuggest: true,
+          errorDetection: true
         }
       };
       localStorage.setItem('registeredUsers', JSON.stringify([demoUser]));
@@ -75,6 +125,51 @@ export const AuthProvider = ({ children }) => {
               level: 1,
               badges: [],
               streak: 0
+            },
+            progress: validUser.progress || {
+              coursesCompleted: 0,
+              coursesInProgress: 0,
+              lessonsCompleted: 0,
+              exercisesSolved: 0,
+              projectsBuilt: 0,
+              codeReviews: 0,
+              communityHelps: 0,
+              studyHours: 0
+            },
+            skills: validUser.skills || {
+              python: 0,
+              javascript: 0,
+              react: 0,
+              aiml: 0
+            },
+            performance: validUser.performance || {
+              averageScore: 0,
+              bestStreak: 0,
+              timeSaved: 0,
+              communityRank: null,
+              efficiency: 0
+            },
+            analytics: validUser.analytics || {
+              weeklyHours: [0, 0, 0, 0, 0, 0, 0]
+            },
+            recentActivity: validUser.recentActivity || [],
+            settings: validUser.settings || {
+              difficulty: 'intermediate',
+              pace: 'normal',
+              languages: ['Python', 'JavaScript'],
+              emailNotifications: true,
+              courseReminders: true,
+              achievementAlerts: true,
+              communityUpdates: false,
+              darkMode: false,
+              reducedMotion: false,
+              fontSize: 'medium',
+              showProfile: true,
+              shareProgress: true,
+              allowMessages: true,
+              aiFeedback: 'balanced',
+              autoSuggest: true,
+              errorDetection: true
             }
           };
           
@@ -124,6 +219,51 @@ export const AuthProvider = ({ children }) => {
             level: 1,
             badges: [],
             streak: 0
+          },
+          progress: {
+            coursesCompleted: 0,
+            coursesInProgress: 0,
+            lessonsCompleted: 0,
+            exercisesSolved: 0,
+            projectsBuilt: 0,
+            codeReviews: 0,
+            communityHelps: 0,
+            studyHours: 0
+          },
+          skills: {
+            python: 0,
+            javascript: 0,
+            react: 0,
+            aiml: 0
+          },
+          performance: {
+            averageScore: 0,
+            bestStreak: 0,
+            timeSaved: 0,
+            communityRank: null,
+            efficiency: 0
+          },
+          analytics: {
+            weeklyHours: [0, 0, 0, 0, 0, 0, 0]
+          },
+          recentActivity: [],
+          settings: {
+            difficulty: 'intermediate',
+            pace: 'normal',
+            languages: ['Python', 'JavaScript'],
+            emailNotifications: true,
+            courseReminders: true,
+            achievementAlerts: true,
+            communityUpdates: false,
+            darkMode: false,
+            reducedMotion: false,
+            fontSize: 'medium',
+            showProfile: true,
+            shareProgress: true,
+            allowMessages: true,
+            aiFeedback: 'balanced',
+            autoSuggest: true,
+            errorDetection: true
           }
         };
         

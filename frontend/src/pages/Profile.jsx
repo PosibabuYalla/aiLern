@@ -25,22 +25,22 @@ const Profile = () => {
   });
 
   const [settings, setSettings] = useState({
-    difficulty: 'intermediate',
-    pace: 'normal',
-    languages: ['Python', 'JavaScript'],
-    emailNotifications: true,
-    courseReminders: true,
-    achievementAlerts: true,
-    communityUpdates: false,
-    darkMode: false,
-    reducedMotion: false,
-    fontSize: 'medium',
-    showProfile: true,
-    shareProgress: true,
-    allowMessages: true,
-    aiFeedback: 'balanced',
-    autoSuggest: true,
-    errorDetection: true
+    difficulty: user?.settings?.difficulty || 'intermediate',
+    pace: user?.settings?.pace || 'normal',
+    languages: user?.settings?.languages || ['Python', 'JavaScript'],
+    emailNotifications: user?.settings?.emailNotifications ?? true,
+    courseReminders: user?.settings?.courseReminders ?? true,
+    achievementAlerts: user?.settings?.achievementAlerts ?? true,
+    communityUpdates: user?.settings?.communityUpdates ?? false,
+    darkMode: user?.settings?.darkMode ?? false,
+    reducedMotion: user?.settings?.reducedMotion ?? false,
+    fontSize: user?.settings?.fontSize || 'medium',
+    showProfile: user?.settings?.showProfile ?? true,
+    shareProgress: user?.settings?.shareProgress ?? true,
+    allowMessages: user?.settings?.allowMessages ?? true,
+    aiFeedback: user?.settings?.aiFeedback || 'balanced',
+    autoSuggest: user?.settings?.autoSuggest ?? true,
+    errorDetection: user?.settings?.errorDetection ?? true
   });
 
   const handleSubmit = async (e) => {
