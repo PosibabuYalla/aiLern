@@ -20,6 +20,7 @@ import Tutorials from './pages/Tutorials';
 import CoursePage from './pages/CoursePage';
 import LessonPage from './pages/LessonPage';
 import Community from './pages/Community';
+import TestProfile from './pages/TestProfile';
 import Profile from './pages/Profile';
 
 // Auth Guard Component
@@ -113,6 +114,11 @@ function App() {
                   <Route path="/profile" element={
                     <AuthGuard>
                       <Profile />
+                    </AuthGuard>
+                  } />
+                  <Route path="/test-profile" element={
+                    <AuthGuard>
+                      <TestProfile />
                     </AuthGuard>
                   } />
                   
